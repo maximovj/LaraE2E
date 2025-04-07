@@ -5,6 +5,9 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import permissions from './plugins/permissions';
+import roleDirective from '@/directives/role';
+import permissionDirective from '@/directives/permission';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -15,6 +18,9 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(permissions)
+            .directive('role', roleDirective)
+            .directive('permission', permissionDirective)
             .mount(el);
     },
     progress: {

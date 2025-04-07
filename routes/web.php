@@ -25,6 +25,14 @@ Route::get('/', function () {
     ]);
 });
 
+/* Ruta Admin
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', function () {
+        return 'Página de admin';
+    });
+});
+*/
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
