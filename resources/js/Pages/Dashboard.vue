@@ -4,7 +4,6 @@ import { Head } from '@inertiajs/vue3';
 import { useAuthCache } from '@/composables/useAuthCache';
 
 const { hasRole, hasPermission } = useAuthCache();
-
 </script>
 
 <template>
