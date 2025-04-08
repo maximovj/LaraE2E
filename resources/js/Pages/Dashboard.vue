@@ -1,9 +1,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { useAuthCache } from '@/composables/useAuthCache';
+import { usePermissions } from '@/composables/usePermissions';
 
-const { hasRole, hasPermission } = useAuthCache();
+const {
+  hasRole,
+  hasPermission,
+  currentRoles,
+  currentPermissions
+} = usePermissions();
+
+// Ejemplos de uso en el script
+if (hasRole('admin')) {
+  console.log('El usuario es administrador');
+}
+
+if (hasPermission('users.create')) {
+  console.log('El usuario puede crear usuarios');
+}
+
 </script>
 
 <template>
@@ -17,7 +32,13 @@ const { hasRole, hasPermission } = useAuthCache();
         <div v-if="hasRole('admin')" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-red-600 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-white">You're logged in Admin!</div>
+                    <div class="p-6 text-white">
+
+                        <p class="text-slate-700">You're logged in Admin!</p>
+                        <!-- Mostrar roles y permisos actuales -->
+                        <p class="text-white">Roles: {{ currentRoles.join(', ') }}</p>
+                        <p class="text-white">Permisos: {{ currentPermissions.join(', ') }}</p>
+                    </div>
                 </div>
             </div>
         </div>
