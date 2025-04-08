@@ -1,16 +1,8 @@
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { useAuthCache } from '@/composables/useAuthCache';
 
 export default {
     mounted(el, binding) {
-        // Obtener el usuario autenticado de Inertia.js
-        const user = computed(() => usePage().props.auth.user);
-
-        // Función para verificar si el usuario tiene un permiso
-        const hasPermission = (permissionName) => {
-            return user.value?.permissions?.includes(permissionName) ||
-                user.value?.roles?.some(role => role.permissions?.includes(permissionName));
-        };
+        const { hasPermission } = useAuthCache(); // Usamos la caché de autenticación
 
         // Obtener los permisos requeridos desde el binding
         const requiredPermissions = Array.isArray(binding.value) ? binding.value : [binding.value];
