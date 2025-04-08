@@ -1,13 +1,10 @@
+import { useAuthCache } from '@/composables/useAuthCache';
+
 export default {
     install(app) {
-        app.config.globalProperties.$hasRole = function (roleName) {
-            const user = this.$page.props.auth.user;
-            return user?.roles?.includes(roleName);
-        };
+        const { hasRole, hasPermission } = useAuthCache();
 
-        app.config.globalProperties.$hasPermission = function (permissionName) {
-            const user = this.$page.props.auth.user;
-            return user?.permissions?.includes(permissionName);
-        };
+        app.config.globalProperties.$hasRole = hasRole;
+        app.config.globalProperties.$hasPermission = hasPermission;
     }
 };

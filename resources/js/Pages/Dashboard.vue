@@ -17,7 +17,7 @@ const currentPermissions = computed(() => user.value?.permissions || []);
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard</h2>
         </template>
 
-        <div v-role="['admin']" class="py-12">
+        <div v-if="$hasRole('admin')" class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-red-600 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
@@ -30,7 +30,7 @@ const currentPermissions = computed(() => user.value?.permissions || []);
                 </div>
             </div>
         </div>
-        <div v-permission="'create-posts'" class="py-12">
+        <div v-else  class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">You're logged in!</div>

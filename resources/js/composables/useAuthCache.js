@@ -6,7 +6,15 @@ const rolesCache = ref(new Set());
 const permissionsCache = ref(new Set());
 
 export function useAuthCache() {
-    const auth = computed(() => usePage().props.auth);
+    const auth = computed(() => usePage().props?.auth ?? {
+        user: {
+            id: null,
+            name: null,
+            email: null,
+            roles: [],
+            permissions: [],
+        }
+    }); // ✅ Nunca undefined
 
     const getRoles = () => {
         if (rolesCache.value.size === 0 && auth.value.user?.roles) {
