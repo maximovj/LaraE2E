@@ -43,4 +43,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // ******************************************************
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>> RELACIONES
+    // ******************************************************
+
+    public function user_profile()
+    {
+        return $this->hasOne(UserProfile::class, 'id', 'user_id');
+    }
+
 }
