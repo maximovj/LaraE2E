@@ -4,6 +4,7 @@ import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useAuthCache } from '@/composables/useAuthCache';
+import Button from "primevue/button"
 
 const { hasRole, hasPermission } = useAuthCache();
 
@@ -23,7 +24,9 @@ const currentPermissions = computed(() => user.value?.permissions || []);
         <div  class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">Show lists employees</div>
+                    <div class="p-6 text-gray-900">
+                        <Button label="Add" />
+                    </div>
                 </div>
             </div>
         </div>
