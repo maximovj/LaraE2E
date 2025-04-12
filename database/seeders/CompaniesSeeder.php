@@ -16,18 +16,18 @@ class CompaniesSeeder extends Seeder
         //
         // Crear compañías específicas
         $companies = [
-            [
-                'legal_name' => 'Teknok Solutions S.A. de C.V.',
-                'tax_id' => 'TEK123456789',
-                'commercial_name' => 'Teknok',
-                'corporate_email_domain' => 'teknok.com',
-            ],
-            [
-                'legal_name' => 'Moonlight Technologies S.A. de C.V.',
-                'tax_id' => 'MLT987654321',
-                'commercial_name' => 'Moonlight',
-                'corporate_email_domain' => 'moonlight.com',
-            ],
+            // [
+            //     'legal_name' => 'Teknok Solutions S.A. de C.V.',
+            //     'tax_id' => 'TEK123456789',
+            //     'commercial_name' => 'Teknok',
+            //     'corporate_email_domain' => 'teknok.com',
+            // ],
+            // [
+            //     'legal_name' => 'Moonlight Technologies S.A. de C.V.',
+            //     'tax_id' => 'MLT987654321',
+            //     'commercial_name' => 'Moonlight',
+            //     'corporate_email_domain' => 'moonlight.com',
+            // ],
             [
                 'legal_name' => 'Dark Enterprises S.A. de C.V.',
                 'tax_id' => 'DRK456789123',
