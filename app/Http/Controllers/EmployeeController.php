@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,6 +14,23 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        $authUserWithOffice = auth()->user()->load('office');
+        if(!isset($authUserWithOffice->office)) {
+            return abort(404, "Lo siento, compañía no encontrada.");
+        }
+
+        $my_office = $authUserWithOffice->office;
+        $employees = $my_office
+        ->employees()
+        ->withUserAndProfile()
+        ->get();
+
+        //dd( json_encode(EmployeeResource::collection($employees)->response()->getData(true) , JSON_PRETTY_PRINT));
+        //dd(EmployeeResource::collection($employees)->toArray(request()));
+        //dd(EmployeeResource::collection($employees)->toArray(request()));
+
+        return EmployeeResource::collection($employees);
+
         $employees = collect([
             [
                 'nombre' => 'Example',
