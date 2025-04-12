@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\PointCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,7 +49,7 @@ class Office extends Model
 
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [
-        'coordinates' => 'point', // Para el campo 'coordinates', que es un tipo 'point' en la base de datos
+        'coordinates' => PointCast::class, // Para el campo 'coordinates', que es un tipo 'point' en la base de datos
         'business_hours' => 'array', // Cast a array para el campo JSON
     ];
 
