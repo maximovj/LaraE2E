@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Schema;
 
 class Company extends Model
 {
@@ -47,6 +48,38 @@ class Company extends Model
     public function offices()
     {
         return $this->hasMany(Office::class, 'company_id', 'id');
+    }
+
+    // Relación directa si users tienen company_id
+    public function directUsers()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    // Relación a través de employees
+    public function employeeUsers()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Employee::class,
+            'company_id',
+            'id',
+            'id',
+            'user_id'
+        );
+    }
+
+    // Método combinado para obtener todos los usuarios relacionados
+    public function getAllUsers()
+    {
+        // Si existe relación directa
+        if (Schema::hasColumn('users', 'company_id'))
+        {
+            return $this->directUsers();
+        }
+
+        // Si existe relación a través de employees
+        return $this->employeeUsers();
     }
 
 }
