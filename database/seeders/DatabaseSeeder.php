@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             UserProfilesSeeder::class,
             CompaniesSeeder::class,
             OfficesSeeder::class,
+            EmployeesSeeder::class,
         ]);
 
     }
