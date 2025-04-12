@@ -23,12 +23,27 @@ return new class extends Migration
             ->onUpdate('cascade');
 
             $table->string('profile_picture')->nullable();
+            $table->string('first_names');
+            $table->string('last_names');
+            $table->tinyInteger('age')->default(0);
+            $table->date('birthdate');
+            $table->string('blood_type', 10);
             $table->string('address');
             $table->string('zip_code');
             $table->string('ssn')->unique();
             $table->string('bank');
             $table->string('interbank_clabe')->unique();
             $table->text('notes')->nullable();
+
+            $table->enum('marital_status', [
+                'single', // soltero
+                'married', // casado
+                'divorced', // divorciado
+                'widowed', // viudo
+                'separated', // separado
+                'engaged', // comprometido
+                'domestic_partnership', // unión libre
+            ]);
 
             $table->timestamps();
         });
