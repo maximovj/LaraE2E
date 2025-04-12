@@ -6,7 +6,11 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Database\Seeders\UserSeeder;
 use Spatie\Permission\Models\Role;
+use Database\Seeders\OfficesSeeder;
+use Database\Seeders\CompaniesSeeder;
+use Database\Seeders\UserProfilesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +29,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             UserProfilesSeeder::class,
+            CompaniesSeeder::class,
+            OfficesSeeder::class,
         ]);
 
     }
