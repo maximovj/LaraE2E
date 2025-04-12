@@ -16,102 +16,110 @@ class EmployeesSeeder extends Seeder
     public function run(): void
     {
         //
-        // Crear empleados para empresas específicas
-        $teknok = Company::where('commercial_name', 'Teknok')->first();
-        $moonlight = Company::where('commercial_name', 'Moonlight')->first();
+        // Obtener todas las compañías de una sola consulta
+        $companies = Company::with('offices')->get()->keyBy('commercial_name');
 
-        // Empleados para Teknok
-        if ($teknok) {
-            $teknokEmployees = [
-                [
-                    'user_id' => User::where('email', 'admin@larae2e.com')->first()->id,
-                    'employee_number' => 'TK-0001',
-                    'job_title' => 'CEO',
-                    'position' => 'Director General',
-                    'hired_at' => now()->subYears(3),
-                    'status' => 'active',
-                    'salary' => 80000,
-                    'shift' => '9 AM - 6 PM',
-                    'emergency_contact' => 'Maria Lopez - 555-123-4567'
-                ],
-                [
-                    'user_id' => User::where('email', 'teknok@company.com')->first()->id,
+        // Mapeo de usuarios a empleados por compañía
+        $employeeMappings = [
+            'Teknok' => [
+                'teknok@company.com' => [
                     'employee_number' => 'TK-0002',
                     'job_title' => 'CTO',
                     'position' => 'Director de Tecnología',
-                    'hired_at' => now()->subYears(2),
-                    'status' => 'active',
-                    'salary' => 70000,
-                    'shift' => '9 AM - 6 PM',
-                    'emergency_contact' => 'Juan Perez - 555-234-5678'
+                    'salary' => 70000
+                ],
+                'manager@teknok.com' => [
+                    'employee_number' => 'TK-0003',
+                    'job_title' => 'Office Manager',
+                    'position' => 'Gerente de Oficina',
+                    'salary' => 60000
+                ],
+                'employee@teknok.com' => [
+                    'employee_number' => 'TK-0004',
+                    'job_title' => 'Usuario Regular',
+                    'position' => 'Usuario de pruebas',
+                    'salary' => 40000
                 ]
-            ];
-
-            foreach ($teknokEmployees as $employeeData) {
-                Employee::updateOrCreate(
-                    ['employee_number' => $employeeData['employee_number']],
-                    array_merge($employeeData, [
-                        'company_id' => $teknok->id,
-                        'office_id' => $teknok->offices()->first()->id
-                    ])
-                );
-            }
-
-            // Crear 10 empleados aleatorios para Teknok
-            Employee::factory()
-                ->count(10)
-                ->forCompany($teknok)
-                ->create();
-        }
-
-        // Empleados para Moonlight
-        if ($moonlight) {
-            $moonlightEmployees = [
-                [
-                    'user_id' => User::where('email', 'dark@company.com')->first()->id,
+            ],
+            'Dark' => [
+                'dark@company.com' => [
+                    'employee_number' => 'DK-0001',
+                    'job_title' => 'CEO',
+                    'position' => 'Director General',
+                    'salary' => 82000
+                ],
+                'manager@dark.com' => [
+                    'employee_number' => 'DK-0002',
+                    'job_title' => 'Operations Manager',
+                    'position' => 'Gerente de Operaciones',
+                    'salary' => 65000
+                ],
+                'employee@dark.com' => [
+                    'employee_number' => 'DK-0004',
+                    'job_title' => 'Usuario Regular',
+                    'position' => 'Usuario de pruebas',
+                    'salary' => 40000
+                ]
+            ],
+            'Moonlight' => [
+                'moonlight@company.com' => [
                     'employee_number' => 'ML-0001',
                     'job_title' => 'CEO',
                     'position' => 'Director General',
-                    'hired_at' => now()->subYears(4),
-                    'status' => 'active',
-                    'salary' => 85000,
-                    'shift' => '9 AM - 6 PM',
-                    'emergency_contact' => 'Ana Garcia - 555-345-6789'
+                    'salary' => 85000
                 ],
-                [
-                    'user_id' => User::where('email', 'moonlight@company.com')->first()->id,
+                'manager@moonlight.com' => [
                     'employee_number' => 'ML-0002',
-                    'job_title' => 'CFO',
-                    'position' => 'Director Financiero',
-                    'hired_at' => now()->subYears(1),
-                    'status' => 'active',
-                    'salary' => 75000,
-                    'shift' => '9 AM - 6 PM',
-                    'emergency_contact' => 'Carlos Ruiz - 555-456-7890'
+                    'job_title' => 'Finance Manager',
+                    'position' => 'Gerente Financiero',
+                    'salary' => 68000
+                ],
+                'employee@moonlight.com' => [
+                    'employee_number' => 'ML-0004',
+                    'job_title' => 'Usuario Regular',
+                    'position' => 'Usuario de pruebas',
+                    'salary' => 40000
                 ]
-            ];
+            ]
+        ];
 
-            foreach ($moonlightEmployees as $employeeData) {
-                Employee::updateOrCreate(
-                    ['employee_number' => $employeeData['employee_number']],
-                    array_merge($employeeData, [
-                        'company_id' => $moonlight->id,
-                        'office_id' => $moonlight->offices()->first()->id
-                    ])
-                );
+        // Crear empleados para cada compañía
+        foreach ($employeeMappings as $companyName => $employees) {
+            if (!$company = $companies->get($companyName)) {
+                continue;
             }
 
-            // Crear 8 empleados aleatorios para Moonlight
+            $officeId = $company->offices->first()->id ?? null;
+
+            foreach ($employees as $email => $employeeData) {
+                $user = User::where('email', $email)->first();
+
+                if ($user) {
+                    Employee::updateOrCreate(
+                        ['employee_number' => $employeeData['employee_number']],
+                        array_merge($employeeData, [
+                            'user_id' => $user->id,
+                            'company_id' => $company->id,
+                            'office_id' => $officeId,
+                            'hired_at' => now()->subYears(rand(1, 5)),
+                            'status' => 'active',
+                            'shift' => '9 AM - 6 PM',
+                            'emergency_contact' => fake()->name() . ' - ' . fake()->phoneNumber()
+                        ])
+                    );
+                }
+            }
+
+            // Crear empleados aleatorios para la compañía (sin usuario asociado)
             Employee::factory()
-                ->count(8)
-                ->forCompany($moonlight)
-                ->create();
+                ->count(5) // Ajusta según necesidad
+                ->forCompany($company)
+                ->create([
+                    'office_id' => $company->offices->random()->id ?? null
+                ]);
         }
 
-        // Crear 15 empleados aleatorios para otras compañías
-        Employee::factory()
-            ->count(15)
-            ->create();
-
+        // Empleados genéricos (sin compañía específica)
+        Employee::factory()->count(10)->create();
     }
 }
