@@ -22,10 +22,10 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'user']);
+        $this->call([
+            UserSeeder::class,
+            UserProfilesSeeder::class,
+        ]);
 
-        $admin = User::first();
-        $admin->assignRole('admin');
     }
 }
