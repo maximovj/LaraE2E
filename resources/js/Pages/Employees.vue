@@ -1,16 +1,30 @@
 <script setup>
+// Importaciones
+import { ref, computed, watch, defineProps } from 'vue';
+import { Head, usePage, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
 import { useAuthCache } from '@/composables/useAuthCache';
-import Button from "primevue/button"
 
+// Lógica
 const { hasRole, hasPermission } = useAuthCache();
 
-const user = computed(() => usePage().props.auth.user);
-const currentRoles = computed(() => user.value?.roles || []);
-const currentPermissions = computed(() => user.value?.permissions || []);
+const props = defineProps({
+    employees: {
+        type: Array,
+        required: true,
+        default: () => [] // Valor por defecto
+    }
+});
+
+// Si necesitas manipular los datos
+const localEmployees = ref([...props.employees]);
+console.log("Empleados (sin Proxy):", JSON.parse(JSON.stringify(localEmployees.value)));
+console.log("Target:", localEmployees.value.__v_raw);
+
+// O si necesitas reaccionar a cambios
+watch(() => props.employees, (newVal) => {
+  localEmployees.value = [...newVal];
+});
 </script>
 
 <template>
@@ -25,7 +39,12 @@ const currentPermissions = computed(() => user.value?.permissions || []);
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <Button label="Add" />
+                        <Button label="Agregar" />
+                        <DataTable :value="employees" tableStyle="min-width: 50rem">
+                            <Column field="nombre" header="nombre"></Column>
+                            <Column field="apellido" header="apellido"></Column>
+                            <Column field="edad" header="edad"></Column>
+                        </DataTable>
                     </div>
                 </div>
             </div>
