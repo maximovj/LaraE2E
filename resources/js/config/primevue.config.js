@@ -75,11 +75,20 @@ export const primeVueConfig = {
     }
 };
 
+import {
+    DataTable,
+    Column,
+    ColumnGroup,
+    Row,
+    Button,
+    Card,
+} from 'primevue';
+
 export const primeVueComponents = {
-    DataTable: () => import('primevue/datatable'),
-    Column: () => import('primevue/column'),
-    ColumnGroup: () => import('primevue/columngroup'),
-    Row: () => import('primevue/row'),
-    InputText: () => import('primevue/inputtext'),
-    Button: () => import('primevue/button')
+    DataTable,
+    Column,
+    ColumnGroup,
+    Row,
+    Button,
+    Card,
 };
