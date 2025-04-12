@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\WithUserProfile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,6 +10,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Employee extends Model
 {
     use HasFactory, SoftDeletes;
+
+    // Traits Personalizadas
+    use WithUserProfile;
 
     // Especificamos la tabla
     protected $table = 'employees';
@@ -78,4 +82,5 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class, 'manager_id');
     }
+
 }

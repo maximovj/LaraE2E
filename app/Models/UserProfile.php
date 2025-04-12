@@ -48,6 +48,13 @@ class UserProfile extends Model
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [];
 
+    // Especificamos que atributos deben ser ocultos
+    protected $hidden = [
+        'ssn',
+        'bank',
+        'interbank_clabe',
+    ];
+
     // ******************************************************
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>> RELACIONES
     // ******************************************************
