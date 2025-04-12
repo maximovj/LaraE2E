@@ -29,7 +29,7 @@ class EmployeeController extends Controller
         //dd(EmployeeResource::collection($employees)->toArray(request()));
         //dd(EmployeeResource::collection($employees)->toArray(request()));
 
-        return EmployeeResource::collection($employees);
+        return $employees;
 
         $employees = collect([
             [
