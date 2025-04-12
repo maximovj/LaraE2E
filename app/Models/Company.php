@@ -40,5 +40,14 @@ class Company extends Model
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [];
 
+    // ******************************************************
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>> RELACIONES
+    // ******************************************************
+
+    public function offices()
+    {
+        return $this->hasMany(Office::class, 'company_id', 'id');
+    }
+
 }
 
