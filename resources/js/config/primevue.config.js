@@ -82,6 +82,8 @@ import {
     Row,
     Button,
     Card,
+    InputText,
+    Tag,
 } from 'primevue';
 
 export const primeVueComponents = {
@@ -91,4 +93,6 @@ export const primeVueComponents = {
     Row,
     Button,
     Card,
+    InputText,
+    Tag,
 };
