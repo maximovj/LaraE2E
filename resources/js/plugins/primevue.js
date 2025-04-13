@@ -4,6 +4,7 @@ import PrimeVue from 'primevue/config';
 import { primeVueConfig, primeVueComponents } from '@/config/primevue.config';
 import { defineAsyncComponent } from 'vue';
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
 
 /*
 import DataTable from 'primevue/datatable';
@@ -21,6 +22,9 @@ export default {
 
         // Registrar servicio Toast
         app.use(ToastService);
+
+        // Registrar servicio Confirmation
+        app.use(ConfirmationService);
 
         /*
         app.component('DataTable', DataTable);

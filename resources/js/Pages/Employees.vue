@@ -4,8 +4,12 @@ import { ref, computed, watch, defineProps } from 'vue';
 import { Head, usePage, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useAuthCache } from '@/composables/useAuthCache';
+
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
+
+import ConfirmPopup from 'primevue/confirmpopup';
+import { useConfirm } from "primevue/useconfirm";
 
 // Lógica
 const { getCurrentPermissions } = useAuthCache();
@@ -23,6 +27,7 @@ const localEmployees = ref([...props.employees]);
 const filters = ref({ global: { value: null, matchMode: 'contains' } });
 const loading = ref(false);
 const toast = useToast();
+const confirm = useConfirm();
 
 // Verificar permisos
 const canCreate = computed(() => getCurrentPermissions().includes('employees.create'));
@@ -38,14 +43,32 @@ const onRowSelect = (event) => {
     }
 }
 
-const confirmDelete = (user) => {
-  if (confirm('¿Estás seguro de eliminar este usuario?')) {
-    router.delete(route('employees.destroy', user.id), {
-      onSuccess: () => {
-        localEmployees.value = localEmployees.value.filter(u => u.id !== user.id)
-      }
+const confirmDelete = (event, user) => {
+    confirm.require({
+        target: event.currentTarget,
+        message: 'Are you sure you want to proceed?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Eliminar',
+            severity: 'danger'
+        },
+        accept: () => {
+            toast.add({ severity: 'success', summary: 'Confirmado', detail: 'Acción aceptada correctamente', life: 3000 });
+            router.delete(route('employees.destroy', user.id), {
+                onSuccess: () => {
+                    localEmployees.value = localEmployees.value.filter(u => u.id !== user.id)
+                }
+            });
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Cancela', detail: 'Acción cancelada correctamente', life: 3000 });
+        }
     });
-  }
 }
 
 // O si necesitas reaccionar a cambios
@@ -62,6 +85,7 @@ console.log("Employees Props: ", props.employees);
 
 <template>
     <Toast />
+    <ConfirmPopup></ConfirmPopup>
     <Head title="Employees" />
 
     <AuthenticatedLayout>
@@ -137,7 +161,8 @@ console.log("Employees Props: ", props.employees);
                                     v-if="canDelete"
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-text p-button-danger"
-                                    @click.stop="confirmDelete(data)"
+                                    severity="danger"
+                                    @click="confirmDelete($event, data)"
                                 />
                                 </div>
                             </template>
