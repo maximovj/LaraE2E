@@ -3,6 +3,7 @@ import 'primeicons/primeicons.css';
 import PrimeVue from 'primevue/config';
 import { primeVueConfig, primeVueComponents } from '@/config/primevue.config';
 import { defineAsyncComponent } from 'vue';
+import ToastService from 'primevue/toastservice';
 
 /*
 import DataTable from 'primevue/datatable';
@@ -17,6 +18,9 @@ export default {
     install(app) {
         // Registrar PrimeVue como plugin
         app.use(PrimeVue, primeVueConfig);
+
+        // Registrar servicio Toast
+        app.use(ToastService);
 
         /*
         app.component('DataTable', DataTable);

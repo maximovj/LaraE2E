@@ -4,6 +4,8 @@ import { ref, computed, watch, defineProps } from 'vue';
 import { Head, usePage, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useAuthCache } from '@/composables/useAuthCache';
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
 
 // Lógica
 const { getCurrentPermissions } = useAuthCache();
@@ -20,6 +22,7 @@ const props = defineProps({
 const localEmployees = ref([...props.employees]);
 const filters = ref({ global: { value: null, matchMode: 'contains' } });
 const loading = ref(false);
+const toast = useToast();
 
 // Verificar permisos
 const canCreate = computed(() => getCurrentPermissions().includes('employees.create'));
@@ -30,7 +33,8 @@ const canRead = computed(() => getCurrentPermissions().includes('employees.read'
 const onRowSelect = (event) => {
     if(canRead){
         //console.log('event: ', {event}, 'event.data.id: ' + event.data.id);
-        router.visit(route('employees.show', event.data.id));
+        toast.add({ severity: 'info', summary: 'Empleado', detail: `${event.data.employee_number} | ${event.data.position}`, life: 3000 });
+        //router.visit(route('employees.show', event.data.id));
     }
 }
 
@@ -57,9 +61,11 @@ console.log("Employees Props: ", props.employees);
 </script>
 
 <template>
+    <Toast />
     <Head title="Employees" />
 
     <AuthenticatedLayout>
+
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Employees</h2>
         </template>
@@ -79,7 +85,6 @@ console.log("Employees Props: ", props.employees);
                     <DataTable
                     :value="localEmployees"
                     tableStyle="min-width: 50rem"
-                    :paginator="true"
                     :rows="50"
                     :rowsPerPageOptions="[50,100,500,1000]"
                     :loading="loading"
@@ -88,24 +93,32 @@ console.log("Employees Props: ", props.employees);
                     @rowSelect="onRowSelect"
                     dataKey="employee_number"
                     stripedRows
+                    showGridlines
+                    removableSort
+                    sortMode="multiple"
+                    :paginator="true"
                     paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} empleados"
                     >
 
                     <template #header>
-                    <div class="flex justify-between items-center">
-                        <span class="p-input-icon-left">
-                        <i class="pi pi-search me-2" />
-                        <InputText v-model="filters.global.value" placeholder="Buscar..." />
-                        </span>
-                    </div>
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <span class="text-xl font-bold">Empleados</span>
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <span class="p-input-icon-left">
+                                    <i class="pi pi-search me-2" />
+                                    <InputText v-model="filters.global.value" placeholder="Buscar..." />
+                                </span>
+                                <Button icon="pi pi-refresh" rounded raised/>
+                            </div>
+                        </div>
                     </template>
 
-                        <Column field="employee_number" header="No. de empleado"></Column>
-                        <Column field="job_title" header="Título del trabajo"></Column>
-                        <Column field="position" header="Posición"></Column>
-                        <Column field="salary" header="Salario"></Column>
-                        <Column field="shift" header="Horario"></Column>
+                        <Column field="employee_number" header="No. de empleado" sortable></Column>
+                        <Column field="job_title" header="Título del trabajo" sortable></Column>
+                        <Column field="position" header="Posición" sortable></Column>
+                        <Column field="salary" header="Salario" sortable></Column>
+                        <Column field="shift" header="Horario" sortable></Column>
                         <Column header="Estado">
                             <template #body="{data}">
                                 <Tag :key="data.id" :value="data.status" class="mr-2" />
