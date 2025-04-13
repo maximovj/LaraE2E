@@ -27,7 +27,7 @@ class EmployeeController extends Controller
         ->withUserAndProfile()
         ->get();
 
-        return Inertia::render('Employees', [
+        return Inertia::render('Employee/Index', [
             'employees' => $employees
         ]);
     }
