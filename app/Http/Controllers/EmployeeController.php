@@ -14,7 +14,9 @@ class EmployeeController extends Controller
      */
     public function index()
     {
+        /** @var \App\Models\User $authUserWithOffice */
         $authUserWithOffice = auth()->user()->load('office');
+
         if(!isset($authUserWithOffice->office)) {
             return abort(404, "Lo siento, compañía no encontrada.");
         }
@@ -24,25 +26,6 @@ class EmployeeController extends Controller
         ->employees()
         ->withUserAndProfile()
         ->get();
-
-        //dd( json_encode(EmployeeResource::collection($employees)->response()->getData(true) , JSON_PRETTY_PRINT));
-        //dd(EmployeeResource::collection($employees)->toArray(request()));
-        //dd(EmployeeResource::collection($employees)->toArray(request()));
-
-        return $employees;
-
-        $employees = collect([
-            [
-                'nombre' => 'Example',
-                'apellido' => 'Example',
-                'edad' => 20,
-            ],
-            [
-                'nombre' => 'Example',
-                'apellido' => 'Example',
-                'edad' => 20,
-            ]
-        ]);
 
         return Inertia::render('Employees', [
             'employees' => $employees
@@ -71,6 +54,8 @@ class EmployeeController extends Controller
     public function show(Employee $employee)
     {
         //
+        // TODO: Crear una vista vue para mostrar información del empleado
+        dd('Ver un empleado', $employee);
     }
 
     /**
@@ -79,6 +64,8 @@ class EmployeeController extends Controller
     public function edit(Employee $employee)
     {
         //
+        // TODO: Crear una vista vue para editar información del empleado
+        dd('Editar un empleado', $employee);
     }
 
     /**
@@ -94,6 +81,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        return response()->json([
+            'ctx_message' => 'Empleado'
+        ], 200);
     }
 }
