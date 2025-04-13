@@ -57,6 +57,7 @@ class UserSeeder extends Seeder
             'employees.create',
             'employees.read',
             'employees.update',
+            'employees.delete',
             'employees.manage',
             'offices.read',
             'user_profiles.read',
