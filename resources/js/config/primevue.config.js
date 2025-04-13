@@ -1,6 +1,7 @@
 // config/primevue.config.js
 import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
+import { es } from "primelocale/js/es.js";
 
 export const Noir = definePreset(Aura, {
     semantic: {
@@ -61,11 +62,7 @@ export const primeVueConfig = {
         menu: 1000,         //overlay menus
         tooltip: 1100       //tooltip
     },
-    locale: {
-        accept: 'Aceptar',
-        reject: 'Rechazar',
-        //...
-    },
+    locale: es,
     theme: {
         preset: Noir,
         options: {

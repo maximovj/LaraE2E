@@ -20,6 +20,7 @@
     "dependencies": {
         "@primeuix/themes": "^1.0.3",
         "primeicons": "^7.0.0",
+        "primelocale": "^2.1.2",
         "primevue": "^4.3.3"
     }
 }
