@@ -84,6 +84,7 @@ import {
     Card,
     InputText,
     Tag,
+    Select,
 } from 'primevue';
 
 export const primeVueComponents = {
@@ -95,4 +96,5 @@ export const primeVueComponents = {
     Card,
     InputText,
     Tag,
+    Select,
 };
