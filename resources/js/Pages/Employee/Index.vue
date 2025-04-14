@@ -124,7 +124,12 @@ console.log("Employees Props: ", props.employees);
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <div class="flex justify-between mb-6">
                         <h2 class="text-2xl font-semibold"></h2>
-                        <Button v-if="canCreate" icon="pi pi-plus" label="Nuevo Empleado" />
+                        <Button
+                        v-if="canCreate"
+                        icon="pi pi-plus"
+                        label="Nuevo Empleado"
+                        @click="router.visit(route('employees.create'))"
+                        />
                     </div>
 
                     <DataTable

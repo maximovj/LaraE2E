@@ -78,10 +78,14 @@ import {
     ColumnGroup,
     Row,
     Button,
+    ToggleButton,
     Card,
     InputText,
+    Password,
+    Message,
     Tag,
     Select,
+    Divider,
 } from 'primevue';
 
 export const primeVueComponents = {
@@ -90,8 +94,12 @@ export const primeVueComponents = {
     ColumnGroup,
     Row,
     Button,
+    ToggleButton,
     Card,
     InputText,
+    Password,
+    Message,
     Tag,
     Select,
+    Divider,
 };
