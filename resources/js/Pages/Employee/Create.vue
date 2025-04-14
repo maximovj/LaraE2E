@@ -85,20 +85,40 @@ const marital_status = ref([
     { name: 'domestic_partnership', code: 'domestic_partnership' },
 ]);
 
-const submitUserCreate = () => {
-    user_form.post(router('employees.store'), {
-        data: {
-            active_step: activeStep,
-        },
+const isNotErrors = (obj) => {
+  return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
+}
+
+const submitUserCreate = (nextStep) => {
+    user_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value,
+    }))
+    .post(route('employees.store'), {
         onSuccess: () => {
             toast.add({
                 severity: 'success',
                 summary: 'Registro de cuenta',
                 detail: 'Todos los campos son correctos'
             });
-        }
-    })
-
+            activeStep.value = nextStep;
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Registro de cuenta',
+                detail: 'Hay errores en los campos',
+            });
+        },
+        onFinish: () => {
+            if(isNotErrors(user_form.errors)){
+                console.log('No hay errores, felicidades');
+            }else {
+                console.log('errores:', user_form.errors);
+            }
+        },
+    });
 }
 
 const finishStep = (nextStep) => {
@@ -249,10 +269,10 @@ const finishStep = (nextStep) => {
                                         <FloatLabel variant="in">
                                             <Password
                                             :invalid="true"
-                                            v-model="user_form.confirm_password"
-                                            inputId="in_confirm_password"
+                                            v-model="user_form.password_confirmation"
+                                            inputId="in_password_confirmation"
                                             fluid />
-                                            <label for="in_confirm_password">Confirmar Contraseña</label>
+                                            <label for="in_password_confirmation">Confirmar Contraseña</label>
                                         </FloatLabel>
                                         <Message class="hidden" severity="error" variant="simple" size="small">Enter your confirm password.</Message>
                                     </div>
@@ -261,7 +281,7 @@ const finishStep = (nextStep) => {
                                     <Button label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
                                         @click="activateCallback(2)" />
                                     <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="activateCallback(2)" />
+                                        @click="submitUserCreate(2)" />
                                 </div>
                             </StepPanel>
                             <StepPanel v-if="canUserProfilesCreate" v-slot="{ activateCallback }" :value="2">

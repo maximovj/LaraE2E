@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -47,6 +49,17 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         //
+        $active_step = intval(request('active_step'));
+
+        if($active_step === 1){
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+        }
+
+        return response()->noContent(200);
     }
 
     /**
