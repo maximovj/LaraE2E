@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
     protected function createBasePermissions(): void
     {
         $models = ['users', 'companies', 'employees', 'offices', 'user_profiles'];
-        $actions = ['create', 'read', 'update', 'delete', 'manage']; // 'manage' para acciones especiales
+        $actions = ['create', 'read', 'update', 'delete', 'destroy', 'manage']; // 'manage' para acciones especiales
 
         foreach ($models as $model) {
             foreach ($actions as $action) {
@@ -60,8 +60,10 @@ class UserSeeder extends Seeder
             'employees.delete',
             'employees.manage',
             'offices.read',
-            'user_profiles.read',
-            'user_profiles.update',
+            'user_profiles.create',
+            'user_profiles.delete',
+            'users.create',
+            'users.delete',
             'reports.generate'
         ]);
 
