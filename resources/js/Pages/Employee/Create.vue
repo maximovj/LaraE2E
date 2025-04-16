@@ -473,8 +473,13 @@ const finishStep = (nextStep) => {
                                 <div class="flex pt-6 justify-between">
                                     <Button label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(1)" />
-                                    <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="submitUserProfileCreate(3)" />
+
+                                    <div>
+                                        <Button class="me-2" label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
+                                        @click="activateCallback(3)" />
+                                        <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
+                                            @click="submitUserProfileCreate(3)" />
+                                    </div>
                                 </div>
                             </StepPanel>
                             <StepPanel v-slot="{ activateCallback }" :value="3">
