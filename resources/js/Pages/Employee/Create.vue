@@ -230,7 +230,7 @@ const finishStep = (nextStep) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_form.errors?.name"
                                             v-model="user_form.name"
                                             size="small"
                                             id="name"
@@ -238,12 +238,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="name">Nombre</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_form.errors?.name}" severity="error" variant="simple" size="small">{{ user_form.errors?.name }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_form.errors?.email"
                                             v-model="user_form.email"
                                             type="email"
                                             size="small"
@@ -252,29 +252,29 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="email">Correo electrónico</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your email.</Message>
+                                        <Message :class="{'hidden': !user_form.errors?.email}" severity="error" variant="simple" size="small">{{ user_form.errors?.email }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <Password
-                                            :invalid="true"
+                                            :invalid="user_form.errors?.password"
                                             v-model="user_form.password"
                                             inputId="in_password"
                                             fluid />
                                             <label for="in_password">Contraseña</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your password.</Message>
+                                        <Message :class="{'hidden': !user_form.errors?.password}" severity="error" variant="simple" size="small">{{ user_form.errors?.password }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <Password
-                                            :invalid="true"
+                                            :invalid="user_form.errors?.password_confirmation"
                                             v-model="user_form.password_confirmation"
                                             inputId="in_password_confirmation"
                                             fluid />
                                             <label for="in_password_confirmation">Confirmar Contraseña</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your confirm password.</Message>
+                                        <Message :class="{'hidden': !user_form.errors?.password_confirmation}" severity="error" variant="simple" size="small">{{ user_form.errors?.password_confirmation }}</Message>
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-end gap-2">
