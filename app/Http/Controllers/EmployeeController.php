@@ -51,11 +51,27 @@ class EmployeeController extends Controller
         //
         $active_step = intval(request('active_step'));
 
-        if($active_step === 1){
+        if($active_step === 1) {
             $request->validate([
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            ]);
+        }
+
+        if($active_step === 2) {
+            $request->validate([
+                'first_names' => ['required', 'string', 'max:255'],
+                'last_names' => ['required', 'string', 'max:255'],
+                'age' => ['required', 'numeric'],
+                'birthdate' => ['required', 'date'],
+                'blood_type' => ['required', 'string', 'max:10'],
+                'marital_status.code' => ['required', 'string'],
+                'address' => ['required', 'string', 'max:255'],
+                'zip_code' => ['required', 'string', 'max:255'],
+                'ssn' => ['required', 'string', 'max:255'],
+                'bank' => ['required', 'string', 'max:255'],
+                'interbank_clabe' => ['required', 'string', 'max:255'],
             ]);
         }
 

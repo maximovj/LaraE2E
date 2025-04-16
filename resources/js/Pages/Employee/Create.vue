@@ -37,9 +37,9 @@ const user_form = useForm({
 const user_profile_form = useForm({
     first_names: '',
     last_names: '',
-    age: '',
-    birthdate: '',
-    marital_status: '',
+    age: 18,
+    birthdate: new Date(),
+    marital_status: { name: 'single', code: 'single' },
     blood_type: '',
     address: '',
     zip_code: '',
@@ -116,6 +116,40 @@ const submitUserCreate = (nextStep) => {
                 console.log('No hay errores, felicidades');
             }else {
                 console.log('errores:', user_form.errors);
+            }
+        },
+    });
+}
+
+const submitUserProfileCreate = (nextStep) => {
+    user_profile_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value,
+    }))
+    .post(route('employees.store'), {
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Registro de perfil de usuario',
+                detail: 'Todos los campos son correctos',
+                life: 3000,
+            });
+            activeStep.value = nextStep;
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Registro de perfil de usuario',
+                detail: 'Hay errores en los campos',
+                life: 3000,
+            });
+        },
+        onFinish: () => {
+            if(isNotErrors(user_profile_form.errors)){
+                console.log('No hay errores, felicidades');
+            }else {
+                console.log('errores:', user_profile_form.errors);
             }
         },
     });
@@ -292,7 +326,7 @@ const finishStep = (nextStep) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.first_names"
                                             v-model="user_profile_form.first_names"
                                             size="small"
                                             id="name"
@@ -300,12 +334,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="name">Nombre(s)</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.first_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.first_names }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.last_names"
                                             v-model="user_profile_form.last_names"
                                             size="small"
                                             id="email"
@@ -313,12 +347,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="email">Apellidos(s)</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your email.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.last_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.last_names }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputNumber
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.age"
                                             v-model="user_profile_form.age"
                                             inputId="on_integeronly"
                                             :min="1"
@@ -328,12 +362,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="on_integeronly">Edad</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your email.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.age}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.age }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <DatePicker
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.birthdate"
                                             v-model="user_profile_form.birthdate"
                                             showIcon
                                             iconDisplay="input"
@@ -342,11 +376,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="on_birthdate">Fecha de nacimiento</label>
                                         </FloatLabel>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.birthdate}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.birthdate }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <Select
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.marital_status"
                                             v-model="user_profile_form.marital_status"
                                             inputId="on_marital_status"
                                             :options="marital_status"
@@ -354,11 +389,12 @@ const finishStep = (nextStep) => {
                                             class="w-full" />
                                             <label for="on_marital_status">Estado civil</label>
                                         </FloatLabel>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.marital_status}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.marital_status }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.blood_type"
                                             v-model="user_profile_form.blood_type"
                                             size="small"
                                             id="blood_type"
@@ -366,12 +402,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="blood_type">Tipo de sangre</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.blood_type}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.blood_type }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.address"
                                             v-model="user_profile_form.address"
                                             size="small"
                                             id="address"
@@ -379,12 +415,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="address">Dirección</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.address}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.address }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.zip_code"
                                             v-model="user_profile_form.zip_code"
                                             size="small"
                                             id="zip_code"
@@ -392,12 +428,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="zip_code">Código Postal</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.zip_code}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.zip_code }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.ssn"
                                             v-model="user_profile_form.ssn"
                                             size="small"
                                             id="ssn"
@@ -405,12 +441,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="ssn">NSS</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.ssn}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.ssn }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.bank"
                                             v-model="user_profile_form.bank"
                                             size="small"
                                             id="bank"
@@ -418,12 +454,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="bank">Banco (Nombre)</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.bank}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.bank }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="user_profile_form.errors?.interbank_clabe"
                                             v-model="user_profile_form.interbank_clabe"
                                             size="small"
                                             id="interbank_clabe"
@@ -431,14 +467,14 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="interbank_clabe">CLABE (interbancaria)</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !user_profile_form.errors?.interbank_clabe}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.interbank_clabe }}</Message>
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between">
                                     <Button label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(1)" />
                                     <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="activateCallback(3)" />
+                                        @click="submitUserProfileCreate(3)" />
                                 </div>
                             </StepPanel>
                             <StepPanel v-slot="{ activateCallback }" :value="3">
