@@ -76,16 +76,27 @@ class EmployeeController extends Controller
         }
 
         if($active_step === 3) {
-            $request->validate([
+            $employee_attr = $request->validate([
                 'employee_number' => ['required', 'string', 'max:255'],
                 'job_title' => ['required', 'string', 'max:255'],
                 'position' => ['required', 'string', 'max:255'],
                 'hired_at' => ['required', 'date'],
-                'status' => ['required', 'string', 'max:255'],
                 'salary' => ['required', 'numeric'],
                 'shift' => ['required', 'string', 'max:255'],
                 'emergency_contact' => ['required', 'string', 'max:255'],
             ]);
+
+            /** @var \App\Models\User $authUserWithCompany */
+            $authUserWithCompany = auth()->user()->load('company');
+            /** @var \App\Models\User $authUserWithOffice */
+            $authUserWithOffice = auth()->user()->load('office');
+
+            $employee = new Employee();
+            $employee->fill($employee_attr);
+            $employee->status = 'active';
+            $employee->company_id = $authUserWithCompany->company->id;
+            $employee->office_id = $authUserWithOffice->office->id;
+            $employee->save();
         }
 
         return response()->noContent(200);
