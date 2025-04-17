@@ -53,6 +53,7 @@ class Employee extends Model
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [
         'salary' => 'decimal:2', // Casteo del salario a decimal
+        'hired_at' => 'date',
     ];
 
     // ******************************************************
