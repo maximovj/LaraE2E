@@ -100,11 +100,9 @@ watch(() => props.employees, (newVal) => {
     localEmployees.value = [...newVal];
 });
 
-/*
 console.log("Empleados (sin Proxy):", JSON.parse(JSON.stringify(localEmployees.value)));
 console.log("Target:", localEmployees.value.__v_raw);
 console.log("Employees Props: ", props.employees);
-*/
 </script>
 
 <template>
@@ -186,6 +184,12 @@ console.log("Employees Props: ", props.employees);
                         <Column header="Acciones" v-if="canUpdate || canDelete">
                             <template #body="{ data }">
                                 <div class="flex space-x-2">
+                                    <Button v-if="data?.user" severity="success" icon="pi pi-user"
+                                        class="p-button-rounded" />
+                                    <Button v-else severity="help" icon="pi pi-user-plus" class="p-button-rounded p-button-text" />
+                                    <Button v-if="data.user?.user_profile" severity="success" icon="pi pi-id-card"
+                                        class="p-button-rounded" />
+                                    <Button v-else icon="pi pi-id-card" severity="help" class="p-button-rounded p-button-text" />
                                     <Button v-if="canUpdate" icon="pi pi-pencil" class="p-button-rounded p-button-text"
                                         @click.stop="router.visit(route('employees.edit', data.id))" />
                                     <Button v-if="canDelete" icon="pi pi-trash"
