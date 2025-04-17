@@ -52,9 +52,9 @@ const employee_form = useForm({
     employee_number: '',
     job_title: '',
     position: '',
-    hired_at: '',
+    hired_at: new Date(),
     status: '',
-    salary: '',
+    salary: 0.0,
     shift: '',
     emergency_contact: '',
 });
@@ -133,7 +133,6 @@ const submitUserProfileCreate = (nextStep) => {
                 severity: 'success',
                 summary: 'Registro de perfil de usuario',
                 detail: 'Todos los campos son correctos',
-                life: 3000,
             });
             activeStep.value = nextStep;
         },
@@ -142,7 +141,6 @@ const submitUserProfileCreate = (nextStep) => {
                 severity: 'error',
                 summary: 'Registro de perfil de usuario',
                 detail: 'Hay errores en los campos',
-                life: 3000,
             });
         },
         onFinish: () => {
@@ -150,6 +148,38 @@ const submitUserProfileCreate = (nextStep) => {
                 console.log('No hay errores, felicidades');
             }else {
                 console.log('errores:', user_profile_form.errors);
+            }
+        },
+    });
+}
+
+const submitEmployeeCreate = (nextStep) => {
+    employee_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value,
+    }))
+    .post(route('employees.store'), {
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Registro de empleado',
+                detail: 'Todos los campos son correctos'
+            });
+            activeStep.value = nextStep;
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Registro de empleado',
+                detail: 'Hay errores en los campos',
+            });
+        },
+        onFinish: () => {
+            if(isNotErrors(employee_form.errors)){
+                console.log('No hay errores, felicidades');
+            }else {
+                console.log('errores:', employee_form.errors);
             }
         },
     });
@@ -490,7 +520,7 @@ const finishStep = (nextStep) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.employee_number"
                                             v-model="employee_form.employee_number"
                                             type="text"
                                             size="small"
@@ -499,12 +529,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="employee_number">Número de empleado</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your name.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.employee_number}" severity="error" variant="simple" size="small">{{ employee_form.errors?.employee_number }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <DatePicker
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.hired_at"
                                             v-model="employee_form.hired_at"
                                             showIcon
                                             iconDisplay="input"
@@ -513,11 +543,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="on_hired_at">Fecha de contratación</label>
                                         </FloatLabel>
+                                        <Message :class="{'hidden': !employee_form.errors?.hired_at}" severity="error" variant="simple" size="small">{{ employee_form.errors?.hired_at }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.job_title"
                                             v-model="employee_form.job_title"
                                             type="text"
                                             size="small"
@@ -526,12 +557,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="job_title">Titulo de trabajo</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your email.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.job_title}" severity="error" variant="simple" size="small">{{ employee_form.errors?.job_title }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.position"
                                             v-model="employee_form.position"
                                             type="text"
                                             size="small"
@@ -540,12 +571,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="in_position">Posición</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your password.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.position}" severity="error" variant="simple" size="small">{{ employee_form.errors?.position }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.shift"
                                             v-model="employee_form.shift"
                                             type="text"
                                             size="small"
@@ -554,12 +585,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="in_shift">Horario laboral</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your confirm password.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.shift}" severity="error" variant="simple" size="small">{{ employee_form.errors?.shift }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="on">
                                             <InputNumber
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.salary"
                                             v-model="employee_form.salary"
                                             inputId="on_salary"
                                             locale="en-US"
@@ -568,12 +599,12 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="on_salary">Horario laboral</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your confirm password.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.salary}" severity="error" variant="simple" size="small">{{ employee_form.errors?.salary }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <InputText
-                                            :invalid="true"
+                                            :invalid="employee_form.errors?.emergency_contact"
                                             v-model="employee_form.emergency_contact"
                                             type="text"
                                             size="small"
@@ -582,14 +613,14 @@ const finishStep = (nextStep) => {
                                             fluid />
                                             <label for="in_emergency_contact">Contacto de emergencia</label>
                                         </FloatLabel>
-                                        <Message class="hidden" severity="error" variant="simple" size="small">Enter your confirm password.</Message>
+                                        <Message :class="{'hidden': !employee_form.errors?.emergency_contact}" severity="error" variant="simple" size="small">{{ employee_form.errors?.emergency_contact }}</Message>
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between">
                                     <Button label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(2)" />
                                     <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="finishStep(4)" />
+                                        @click="submitEmployeeCreate(4)" />
                                 </div>
                             </StepPanel>
                             <StepPanel v-slot="{ activateCallback }" :value="4">

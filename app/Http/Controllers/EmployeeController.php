@@ -75,6 +75,19 @@ class EmployeeController extends Controller
             ]);
         }
 
+        if($active_step === 3) {
+            $request->validate([
+                'employee_number' => ['required', 'string', 'max:255'],
+                'job_title' => ['required', 'string', 'max:255'],
+                'position' => ['required', 'string', 'max:255'],
+                'hired_at' => ['required', 'date'],
+                'status' => ['required', 'string', 'max:255'],
+                'salary' => ['required', 'numeric'],
+                'shift' => ['required', 'string', 'max:255'],
+                'emergency_contact' => ['required', 'string', 'max:255'],
+            ]);
+        }
+
         return response()->noContent(200);
     }
 
