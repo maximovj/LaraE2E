@@ -41,12 +41,15 @@ class UserProfile extends Model
 
     // Especificamos los campos de tipo fecha que deben ser convertidos a instancias Carbon
     protected $dates = [
+        'birthdate',
         'created_at',
         'updated_at',
     ];
 
     // Especificamos cómo los atributos deben ser casteados
-    protected $casts = [];
+    protected $casts = [
+        'birthdate' => 'date',
+    ];
 
     // Especificamos que atributos deben ser ocultos
     protected $hidden = [

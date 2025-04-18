@@ -126,8 +126,9 @@ const submitUserProfileCreate = (nextStep) => {
     .transform((data) => ({
         ...data,
         active_step: activeStep.value,
+        user: userRef.value,
     }))
-    .post(route('employees.store'), {
+    .post(route('user-profiles.store'), {
         onSuccess: () => {
             toast.add({
                 severity: 'success',
@@ -135,6 +136,7 @@ const submitUserProfileCreate = (nextStep) => {
                 detail: 'Todos los campos son correctos',
             });
             activeStep.value = nextStep;
+            router.visit(route('employees.index'));
         },
         onError: () => {
             toast.add({
