@@ -52,8 +52,17 @@ Route::get('/employee/{employee:employee_number}/user-profile',
     ->name('employees.user_profile')
     ->middleware(['auth', 'verified']);
 
-
 Route::resource('/users', UserController::class)
+    ->middleware(['auth', 'verified']);
+
+Route::post('/users/validate',
+    [UserController::class, 'validateForm'])
+    ->name('users.validate.store')
+    ->middleware(['auth', 'verified']);
+
+Route::post('/users/{user}/validate',
+    [UserController::class, 'validateForm'])
+    ->name('users.validate.update')
     ->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
