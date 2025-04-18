@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
                     'permissions' => $request->user()->getAllPermissions()->pluck('name'),
                 ] : null,
             ],
+            'inertia_session' => fn () => $request->session()->get('inertia_session')
         ];
     }
 }
