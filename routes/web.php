@@ -42,6 +42,11 @@ Route::get('/dashboard', function () {
 Route::resource('/employees', EmployeeController::class)
     ->middleware(['auth', 'verified']);
 
+Route::get('/employees/{employee:employee_number}/user',
+    [EmployeeController::class, 'user'])
+    ->name('employees.user')
+    ->middleware(['auth', 'verified']);
+
 Route::resource('/users', UserController::class)
     ->middleware(['auth', 'verified']);
 
