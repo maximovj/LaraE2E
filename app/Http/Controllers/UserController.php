@@ -6,6 +6,8 @@ use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -74,6 +76,31 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         //
+        // Validación similar al store pero ignorando el email único para este usuario
+        $user_attr = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'password' => ['nullable', 'sometimes', 'string', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        // Solo actualizar la contraseña si se proporcionó
+        if (isset($user_attr['password'])) {
+            $user_attr['password'] = Hash::make($user_attr['password']);
+        } else {
+            unset($user_attr['password']);
+        }
+
+        $user->fill($user_attr);
+        $user->save();
+
+        return redirect()
+            ->back()
+            ->with('inertia_session', [
+                'message' => 'Usuario actualizado',
+                'data' => [
+                    'user' => $user->fresh(), // Para obtener los últimos datos
+                ]
+            ]);
     }
 
     /**
