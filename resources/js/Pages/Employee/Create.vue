@@ -164,7 +164,7 @@ const submitEmployeeCreate = (nextStep) => {
             toast.add({
                 severity: 'success',
                 summary: 'Registro de empleado',
-                detail: 'Todos los campos son correctos'
+                detail: 'Se registro nuevo empleado correctamente'
             });
             activeStep.value = nextStep;
         },
@@ -215,8 +215,7 @@ const finishStep = (nextStep) => {
                         <StepList>
                             <Step v-if="canUsersCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="1">
                                 <div class="flex flex-row flex-auto gap-2" v-bind="a11yAttrs.root">
-                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2"
-                                        @click="activateCallback" v-bind="a11yAttrs.header">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
                                             'rounded-full border-2 w-12 h-12 inline-flex items-center justify-center bg-slate-950 text-white'
                                         ]">
@@ -228,8 +227,7 @@ const finishStep = (nextStep) => {
                             </Step>
                             <Step  v-if="canUserProfilesCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="2">
                                 <div class="flex flex-row flex-auto gap-2 pl-2" v-bind="a11yAttrs.root">
-                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2"
-                                        @click="activateCallback" v-bind="a11yAttrs.header">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
                                             'rounded-full border-2 w-12 h-12 inline-flex items-center justify-center',
                                             {
@@ -248,8 +246,7 @@ const finishStep = (nextStep) => {
                             </Step>
                             <Step  v-if="canUserProfilesCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="3">
                                 <div class="flex flex-row flex-auto gap-2 pl-2" v-bind="a11yAttrs.root">
-                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2"
-                                        @click="activateCallback" v-bind="a11yAttrs.header">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
                                             'rounded-full border-2 w-12 h-12 inline-flex items-center justify-center',
                                             {
@@ -268,8 +265,7 @@ const finishStep = (nextStep) => {
                             </Step>
                             <Step v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="4">
                                 <div class="flex flex-row pl-2" v-bind="a11yAttrs.root">
-                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2"
-                                        @click="activateCallback" v-bind="a11yAttrs.header">
+                                    <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
                                             'rounded-full border-2 w-12 h-12 inline-flex items-center justify-center',
                                             {
@@ -323,6 +319,7 @@ const finishStep = (nextStep) => {
                                             <Password
                                             :invalid="user_form.errors?.password"
                                             v-model="user_form.password"
+                                            toggleMask
                                             inputId="in_password"
                                             fluid />
                                             <label for="in_password">Contraseña</label>
@@ -334,6 +331,7 @@ const finishStep = (nextStep) => {
                                             <Password
                                             :invalid="user_form.errors?.password_confirmation"
                                             v-model="user_form.password_confirmation"
+                                            toggleMask
                                             inputId="in_password_confirmation"
                                             fluid />
                                             <label for="in_password_confirmation">Confirmar Contraseña</label>
@@ -597,7 +595,7 @@ const finishStep = (nextStep) => {
                                             :minFractionDigits="2"
                                             showButtons
                                             fluid />
-                                            <label for="on_salary">Horario laboral</label>
+                                            <label for="on_salary">Salario (Mensual)</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !employee_form.errors?.salary}" severity="error" variant="simple" size="small">{{ employee_form.errors?.salary }}</Message>
                                     </div>

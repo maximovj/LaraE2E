@@ -83,6 +83,7 @@ const confirmDelete = (event, user) => {
             toast.add({ severity: 'success', summary: 'Confirmado', detail: 'Acción aceptada correctamente', life: 3000 });
             router.delete(route('employees.destroy', user.id), {
                 onSuccess: () => {
+                    toast.add({ severity: 'info', summary: 'Empleado', detail: `Empleado eliminado correctamente`, life: 3000 });
                     localEmployees.value = localEmployees.value.filter(u => u.id !== user.id)
                 }
             });

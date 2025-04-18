@@ -236,6 +236,7 @@ watch(userRef, (newValue, oldValue) => {
                                             <Password
                                             :invalid="user_form.errors?.password"
                                             v-model="user_form.password"
+                                            toggleMask
                                             inputId="in_password"
                                             fluid />
                                             <label for="in_password">Contraseña</label>
@@ -247,6 +248,7 @@ watch(userRef, (newValue, oldValue) => {
                                             <Password
                                             :invalid="user_form.errors?.password_confirmation"
                                             v-model="user_form.password_confirmation"
+                                            toggleMask
                                             inputId="in_password_confirmation"
                                             fluid />
                                             <label for="in_password_confirmation">Confirmar Contraseña</label>
