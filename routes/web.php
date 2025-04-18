@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -39,6 +40,9 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('/employees', EmployeeController::class)
+    ->middleware(['auth', 'verified']);
+
+Route::resource('/users', UserController::class)
     ->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
