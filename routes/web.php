@@ -3,6 +3,8 @@
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserProfileController;
+use App\Models\UserProfile;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -63,6 +65,9 @@ Route::post('/users/validate',
 Route::post('/users/{user}/validate',
     [UserController::class, 'validateForm'])
     ->name('users.validate.update')
+    ->middleware(['auth', 'verified']);
+
+Route::resource('user-profiles', UserProfileController::class)
     ->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
