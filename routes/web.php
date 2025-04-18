@@ -47,6 +47,12 @@ Route::get('/employees/{employee:employee_number}/user',
     ->name('employees.user')
     ->middleware(['auth', 'verified']);
 
+Route::get('/employee/{employee:employee_number}/user-profile',
+    [EmployeeController::class, 'user_profile'])
+    ->name('employees.user_profile')
+    ->middleware(['auth', 'verified']);
+
+
 Route::resource('/users', UserController::class)
     ->middleware(['auth', 'verified']);
 
