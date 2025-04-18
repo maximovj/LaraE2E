@@ -66,6 +66,7 @@ class EmployeeController extends Controller
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
+            return response()->noContent(200);
         }
 
         if($active_step === 2) {
@@ -82,6 +83,7 @@ class EmployeeController extends Controller
                 'bank' => ['required', 'string', 'max:255'],
                 'interbank_clabe' => ['required', 'string', 'max:255'],
             ]);
+            return response()->noContent(200);
         }
 
         if($active_step === 3) {
@@ -106,6 +108,12 @@ class EmployeeController extends Controller
             $employee->company_id = $authUserWithCompany->company->id;
             $employee->office_id = $authUserWithOffice->office->id;
             $employee->save();
+
+            return redirect()
+            ->route('employees.index')
+            ->with('inertia_session', [
+                'success' => 'Empleado creado correctamente',
+            ]);
         }
 
         return response()->noContent(200);
@@ -143,8 +151,10 @@ class EmployeeController extends Controller
             'user_id' => $user_id ?? null,
         ]);
 
-        return redirect()->route('employees.index')->with('inertia_session', [
-            'success' => 'Empleado modificado',
+        return redirect()
+        ->route('employees.index')
+        ->with('inertia_session', [
+            'success' => 'Empleado modificado correctamente',
         ]);
     }
 
@@ -153,8 +163,12 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        return response()->json([
-            'ctx_message' => 'Empleado'
-        ], 200);
+        $employee->delete();
+
+        return redirect()
+        ->back()
+        ->with('inertia_session', [
+            'success' => 'Empleado eliminado correctamente',
+        ]);
     }
 }
