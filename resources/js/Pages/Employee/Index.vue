@@ -185,8 +185,11 @@ console.log("Employees Props: ", props.employees);
                             <template #body="{ data }">
                                 <div class="flex space-x-2">
                                     <Button v-if="data?.user" severity="success" icon="pi pi-user"
-                                        class="p-button-rounded" />
-                                    <Button v-else severity="help" icon="pi pi-user-plus" class="p-button-rounded p-button-text" />
+                                        class="p-button-rounded"
+                                        @click.stop="router.visit(route('employees.user', data.employee_number))" />
+                                    <Button v-else severity="help" icon="pi pi-user-plus"
+                                        class="p-button-rounded p-button-text"
+                                        @click.stop="router.visit(route('employees.user', data.employee_number))" />
                                     <Button v-if="data.user?.user_profile" severity="success" icon="pi pi-id-card"
                                         class="p-button-rounded" />
                                     <Button v-else icon="pi pi-id-card" severity="help" class="p-button-rounded p-button-text" />
