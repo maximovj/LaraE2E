@@ -52,6 +52,11 @@ class EmployeeController extends Controller
         ]);
     }
 
+    public function user_profile(Employee $employee)
+    {
+        return Inertia::render('Employee/UserProfile');
+    }
+
     /**
      * Store a newly created resource in storage.
      */
