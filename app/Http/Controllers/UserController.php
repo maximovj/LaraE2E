@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Validation\Rules;
 use Illuminate\Http\Request;
@@ -31,12 +32,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         //
-        $active_step = intval(request('active_step'));
-
-        if($active_step !== 1) {
-            return response()->noContent(405);
-        }
-
         $user_attr = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -47,7 +42,14 @@ class UserController extends Controller
         $new_user->fill($user_attr);
         $new_user->save();
 
-        return response()->noContent(200);
+        return redirect(null, 200)
+            ->back()
+            ->with('inertia_session', [
+                'message' => 'Usuario creado',
+                'data' => [
+                    'user' => $new_user,
+                ]
+            ]);
     }
 
     /**

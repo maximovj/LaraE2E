@@ -43,6 +43,15 @@ class EmployeeController extends Controller
         return Inertia::render('Employee/Create', []);
     }
 
+    public function user(Employee $employee)
+    {
+        return Inertia::render('Employee/User', [
+            'action' =>  !isset($employee->user) ? 'users.store' : 'users.update',
+            'user' => $employee->user ?? null,
+            'employee' => $employee ?? null,
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -128,6 +137,15 @@ class EmployeeController extends Controller
     public function update(Request $request, Employee $employee)
     {
         //
+        $user_id = intval(request()->input('user.id'));
+
+        $employee->update([
+            'user_id' => $user_id ?? null,
+        ]);
+
+        return redirect()->route('employees.index')->with('inertia_session', [
+            'success' => 'Empleado modificado',
+        ]);
     }
 
     /**
