@@ -110,4 +110,31 @@ class UserController extends Controller
     {
         //
     }
+
+    /**
+     * Validate user form data without storing/updating
+     */
+    public function validateForm(Request $request, ?User $user = null)
+    {
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'password' => ['sometimes', 'confirmed', Rules\Password::defaults()],
+        ];
+
+        // Si estamos validando para un usuario existente (edición)
+        if ($user) {
+            $rules['email'][] = Rule::unique(User::class)->ignore($user->id);
+            $rules['password'][0] = 'nullable'; // Cambiar 'sometimes' por 'nullable' para edición
+        } else {
+            // Para creación de nuevo usuario
+            $rules['email'][] = 'unique:'.User::class;
+            $rules['password'][0] = 'required'; // Cambiar 'sometimes' por 'required' para creación
+        }
+
+        $validated = $request->validate($rules);
+
+        return response()->noContent(200);
+    }
+
 }
