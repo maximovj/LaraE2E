@@ -54,7 +54,11 @@ class EmployeeController extends Controller
 
     public function user_profile(Employee $employee)
     {
-        return Inertia::render('Employee/UserProfile');
+        return Inertia::render('Employee/UserProfile', [
+            'user' => $employee->user ?? null,
+            'user_profile' => isset($employee->user->user_profile) ? $employee->user->user_profile : null,
+            'employee' => $employee ?? null,
+        ]);
     }
 
     /**
@@ -157,7 +161,7 @@ class EmployeeController extends Controller
         ]);
 
         return redirect()
-        ->route('employees.index')
+        ->back()
         ->with('inertia_session', [
             'success' => 'Empleado modificado correctamente',
         ]);
