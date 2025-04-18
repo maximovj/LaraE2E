@@ -193,7 +193,8 @@ console.log("Employees Props: ", props.employees);
                                         @click.stop="router.visit(route('employees.user', data.employee_number))" />
                                     <Button v-if="data.user?.user_profile" severity="success" icon="pi pi-id-card"
                                         class="p-button-rounded" />
-                                    <Button v-else icon="pi pi-id-card" severity="help" class="p-button-rounded p-button-text" />
+                                    <Button v-else icon="pi pi-id-card" severity="help" class="p-button-rounded p-button-text"
+                                    @click.stop="router.visit(route('employees.user_profile', data.employee_number))"/>
                                     <Button v-if="canUpdate" icon="pi pi-pencil" class="p-button-rounded p-button-text"
                                         @click.stop="router.visit(route('employees.edit', data.id))" />
                                     <Button v-if="canDelete" icon="pi pi-trash"
