@@ -104,6 +104,41 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
     });
 }
 
+const submitUserUpdate = (nextStep) => {
+    user_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value, // value = 1
+    }))
+    .patch(route(props.action, props.user), {
+        headers: {
+            'X-Inertia' : true,
+        },
+        preserveState: true,
+        onSuccess: (res) => {
+            activeStep.value = nextStep;
+            toast.add({
+                severity: 'success',
+                summary: 'Modificar cuenta',
+                detail: 'Se modifica cuenta correctamente'
+            });
+
+            let new_user = res?.props?.inertia_session?.data?.user;
+            userRef.value = new_user;
+            user_form.reset();
+            submitEmployeeUpdate(nextStep, new_user);
+
+            //router.visit(route('employees.index'));
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Modificar cuenta',
+                detail: 'Hay errores en los campos',
+            });
+        }
+    });
+}
 
 watch(userRef, (newValue, oldValue) => {
   user_form.email = newValue?.email;
@@ -222,7 +257,7 @@ watch(userRef, (newValue, oldValue) => {
                                 <div class="flex pt-6 justify-between gap-2">
                                     <Button label="Volver" severity="secondary" icon="pi pi-arrow-left" iconPos="left" />
                                     <Button :label="!user ? 'Crear' : 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="submitUserCreate(2)" />
+                                        @click="!user ? submitUserCreate(2) : submitUserUpdate(2)" />
                                 </div>
                             </StepPanel>
                             <StepPanel v-slot="{ activateCallback }" :value="2">
