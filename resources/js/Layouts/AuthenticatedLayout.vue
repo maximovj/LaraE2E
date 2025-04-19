@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { useAuthCache } from '@/composables/useAuthCache';
+
+const { getCurrentRoles } = useAuthCache();
+
+const canAccessEmployee = computed(() => getCurrentRoles().includes(['company-admin', 'office-manager']));
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -32,7 +37,7 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                <NavLink :href="route('employees.index')" :active="route().current('employees.index')">
+                                <NavLink v-if="canAccessEmployee" :href="route('employees.index')" :active="route().current('employees.index')">
                                     Employees
                                 </NavLink>
                             </div>

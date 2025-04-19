@@ -42,17 +42,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::resource('/employees', EmployeeController::class)
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth', 'verified', 'role:company-admin|office-manager']);
 
 Route::get('/employees/{employee:employee_number}/user',
     [EmployeeController::class, 'user'])
     ->name('employees.user')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth', 'verified', 'role:company-admin|office-manager']);
 
 Route::get('/employee/{employee:employee_number}/user-profile',
     [EmployeeController::class, 'user_profile'])
     ->name('employees.user_profile')
-    ->middleware(['auth', 'verified']);
+    ->middleware(['auth', 'verified', 'role:company-admin|office-manager']);
 
 Route::resource('/users', UserController::class)
     ->middleware(['auth', 'verified']);
