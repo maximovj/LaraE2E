@@ -53,9 +53,9 @@ class UserProfile extends Model
 
     // Especificamos que atributos deben ser ocultos
     protected $hidden = [
-        'ssn',
-        'bank',
-        'interbank_clabe',
+        //'ssn',
+        //'bank',
+        //'interbank_clabe',
     ];
 
     // ******************************************************

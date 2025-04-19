@@ -81,6 +81,32 @@ class UserProfileController extends Controller
     public function update(Request $request, UserProfile $userProfile)
     {
         //
+        // Validar los datos de entrada (igual que en store)
+        $user_profile_attr = $request->validate([
+            'first_names' => ['required', 'string', 'max:255'],
+            'last_names' => ['required', 'string', 'max:255'],
+            'age' => ['required', 'numeric'],
+            'birthdate' => ['required', 'date'],
+            'blood_type' => ['required', 'string', 'max:10'],
+            'marital_status.code' => ['required', 'string'],
+            'address' => ['required', 'string', 'max:255'],
+            'zip_code' => ['required', 'string', 'max:255'],
+            'ssn' => ['required', 'string', 'max:255'],
+            'bank' => ['required', 'string', 'max:255'],
+            'interbank_clabe' => ['required', 'string', 'max:255'],
+        ]);
+
+        // Procesar marital_status igual que en store
+        $user_profile_attr['marital_status'] = $user_profile_attr['marital_status']['code'];
+
+        // Actualizar el perfil existente en lugar de crear uno nuevo
+        $userProfile->update($user_profile_attr);
+
+        return redirect()
+            ->back()
+            ->with('inertia_session', [
+                'message' => 'Perfil de usuario actualizado exitosamente',
+            ]);
     }
 
     /**

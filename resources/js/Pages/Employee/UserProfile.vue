@@ -78,8 +78,22 @@ const marital_status = ref([
 
 // solo ejecuta una vez al montar
 onMounted(() => {
-    if(props.user)
+    if(props.user) {
         activeStep.value = 2;
+    }
+
+    if(props.user_profile) {
+        user_profile_form.first_names  = props.user_profile.first_names;
+        user_profile_form.last_names  = props.user_profile.last_names;
+        user_profile_form.age  = props.user_profile.age;
+        user_profile_form.birthdate  = props.user_profile.birthdate;
+        user_profile_form.blood_type  = props.user_profile.blood_type;
+        user_profile_form.address  = props.user_profile.address;
+        user_profile_form.zip_code  = props.user_profile.zip_code;
+        user_profile_form.ssn  = props.user_profile.ssn;
+        user_profile_form.bank  = props.user_profile.bank;
+        user_profile_form.interbank_clabe  = props.user_profile.interbank_clabe;
+    }
 });
 
 const isNotErrors = (obj) => {
@@ -155,6 +169,42 @@ const submitUserProfileCreate = (nextStep) => {
     });
 }
 
+const submitUserProfileUpdate = (nextStep) => {
+    user_profile_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value,
+        user: userRef.value,
+    }))
+    .patch(route('user-profiles.update', {
+        user_profile: props.user_profile
+    }), {
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Perfil de usuario',
+                detail: 'Perfil de usuario modificado correctamente',
+            });
+            activeStep.value = nextStep;
+            router.visit(route('employees.index'));
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Perfil de usuario',
+                detail: 'Hay errores en los campos',
+            });
+        },
+        onFinish: () => {
+            if(isNotErrors(user_profile_form.errors)){
+                console.log('No hay errores, felicidades');
+            }else {
+                console.log('errores:', user_profile_form.errors);
+            }
+        },
+    });
+}
+
 const submitEmployeeUpdate = (nextStep, new_user) => {
     router.put(route('employees.update', props.employee), {
         user: userRef.value,
@@ -167,6 +217,10 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
         },
     });
 }
+
+watch([userRef, userProfileRef], ([ur, upf]) => {
+  console.log("ur, upf => ", ur, upf);
+});
 
 // FIN de lógica de programación
 // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -314,10 +368,10 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
                                             :invalid="user_profile_form.errors?.first_names"
                                             v-model="user_profile_form.first_names"
                                             size="small"
-                                            id="name"
-                                            aria-describedby="name-help"
+                                            id="first_names"
+                                            aria-describedby="first_names-help"
                                             fluid />
-                                            <label for="name">Nombre(s)</label>
+                                            <label for="first_names">Nombre(s)</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.first_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.first_names }}</Message>
                                     </div>
@@ -327,10 +381,10 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
                                             :invalid="user_profile_form.errors?.last_names"
                                             v-model="user_profile_form.last_names"
                                             size="small"
-                                            id="email"
-                                            aria-describedby="email-help"
+                                            id="last_names"
+                                            aria-describedby="last_names-help"
                                             fluid />
-                                            <label for="email">Apellidos(s)</label>
+                                            <label for="last_names">Apellidos(s)</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.last_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.last_names }}</Message>
                                     </div>
@@ -339,13 +393,13 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
                                             <InputNumber
                                             :invalid="user_profile_form.errors?.age"
                                             v-model="user_profile_form.age"
-                                            inputId="on_integeronly"
+                                            inputId="on_age"
                                             :min="1"
                                             :max="100"
                                             showButtons
                                             :default-value="18"
                                             fluid />
-                                            <label for="on_integeronly">Edad</label>
+                                            <label for="on_age">Edad</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.age}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.age }}</Message>
                                     </div>
@@ -461,10 +515,8 @@ const submitEmployeeUpdate = (nextStep, new_user) => {
                                     <span v-else></span>
 
                                     <div>
-                                        <Button class="me-2" label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="activateCallback(3)" />
-                                        <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                            @click="submitUserProfileCreate(3)" />
+                                        <Button :label="!user_profile? 'Siguiente': 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
+                                            @click="!user_profile ? submitUserProfileCreate(3) : submitUserProfileUpdate(3)" />
                                     </div>
                                 </div>
                             </StepPanel>
