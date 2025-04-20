@@ -46,8 +46,8 @@ class EmployeeController extends Controller
     public function user(Employee $employee)
     {
         return Inertia::render('Employee/User', [
-            'action' =>  !isset($employee->user) ? 'users.store' : 'users.update',
-            'user' => $employee->user ?? null,
+            'action' => !isset($employee->user) ? 'users.store' : 'users.update',
+            'user' => !isset($employee->user) ? null : $employee->user()->with(['roles:name'])->first(),
             'employee' => $employee ?? null,
         ]);
     }
