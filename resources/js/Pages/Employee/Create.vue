@@ -3,7 +3,7 @@
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch, defineProps } from 'vue';
 
-import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select } from 'primevue';
+import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select, MultiSelect } from 'primevue';
 
 import { FilterMatchMode } from '@primevue/core/api';
 import { useConfirm } from "primevue/useconfirm";
@@ -61,19 +61,7 @@ const employee_form = useForm({
 
 const toast = useToast();
 const activeStep = ref(1);
-const name = ref();
-const email = ref();
-const password = ref();
-const option1 = ref(false);
-const option2 = ref(false);
-const option3 = ref(false);
-const option4 = ref(false);
-const option5 = ref(false);
-const option6 = ref(false);
-const option7 = ref(false);
-const option8 = ref(false);
-const option9 = ref(false);
-const option10 = ref(false);
+const selectedRoles = ref([{name: 'regular-user', code: 'regular-user'}]);
 
 const marital_status = ref([
     { name: 'single', code: 'single' },
@@ -83,6 +71,12 @@ const marital_status = ref([
     { name: 'separated', code: 'separated' },
     { name: 'engaged', code: 'engaged' },
     { name: 'domestic_partnership', code: 'domestic_partnership' },
+]);
+
+const roles = ref([
+    { name: 'company-admin', code: 'company-admin' },
+    { name: 'office-manager', code: 'office-manager' },
+    { name: 'regular-user', code: 'regular-user' },
 ]);
 
 const isNotErrors = (obj) => {
@@ -338,6 +332,21 @@ const finishStep = (nextStep) => {
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_form.errors?.password_confirmation}" severity="error" variant="simple" size="small">{{ user_form.errors?.password_confirmation }}</Message>
                                     </div>
+                                    <div class="flex flex-col gap-2 field mb-4">
+                                        <FloatLabel class="w-full md:w-80" variant="on">
+                                            <MultiSelect id="on_roles"
+                                            :invalid="!!user_form.errors?.roles"
+                                            v-model="selectedRoles"
+                                            :options="roles"
+                                            optionLabel="name"
+                                            :maxSelectedLabels="1"
+                                            variant="filled"
+                                            filter
+                                            class="w-full md:w-80" />
+                                            <label for="on_roles">Rol</label>
+                                            <Message :class="{'hidden': !user_form.errors?.roles}" severity="error" variant="simple" size="small">{{ user_form.errors?.roles }}</Message>
+                                        </FloatLabel>
+                                    </div>
                                 </div>
                                 <div class="flex pt-6 justify-end gap-2">
                                     <Button label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
@@ -399,7 +408,6 @@ const finishStep = (nextStep) => {
                                             v-model="user_profile_form.birthdate"
                                             showIcon
                                             iconDisplay="input"
-                                            :defaultValue="new Date('2006/12/25')"
                                             inputId="on_birthdate"
                                             fluid />
                                             <label for="on_birthdate">Fecha de nacimiento</label>
@@ -536,7 +544,6 @@ const finishStep = (nextStep) => {
                                             v-model="employee_form.hired_at"
                                             showIcon
                                             iconDisplay="input"
-                                            :defaultValue="new Date('2006/12/25')"
                                             inputId="on_hired_at"
                                             fluid />
                                             <label for="on_hired_at">Fecha de contratación</label>
