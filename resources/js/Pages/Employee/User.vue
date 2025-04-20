@@ -34,7 +34,10 @@ const props = defineProps({
 });
 
 //const inertia_session = computed(() => usePage().props.inertia_session);
-const initRoles = computed(() => [...props?.user?.roles?.map(el => ({ name: el.name, code: el.name }))] );
+const initRoles = computed(() => {
+  return props.user?.roles?.map(el => ({ name: el.name, code: el.name })) || []
+});
+
 const selectedRoles = ref(initRoles.value);
 const toast = useToast();
 const activeStep = ref(1);
