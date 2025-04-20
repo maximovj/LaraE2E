@@ -1,7 +1,7 @@
 <script setup>
 // >>>>>>>>> Importaciones
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
-import { ref, computed, watch, defineProps } from 'vue';
+import { ref, computed, watch, defineProps, onMounted } from 'vue';
 
 import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select, MultiSelect } from 'primevue';
 
@@ -24,8 +24,21 @@ const canUserProfilesCreate = computed(() => getCurrentPermissions().includes('u
 const canEmployeesCrete = computed(() => getCurrentPermissions().includes('employees.delete'));
 
 const props = defineProps({
-
+    user: {
+        type: Object,
+        default: null,
+    },
+    user_profile: {
+        type: Object,
+        default: null,
+    },
+    employee: {
+        type: Object,
+        default: null,
+    }
 });
+
+console.log('props por defecto =>',{ props });
 
 const user_form = useForm({
     name: '',
@@ -59,9 +72,15 @@ const employee_form = useForm({
     emergency_contact: '',
 });
 
+const initRoles = computed(() => {
+  return props.user?.roles?.map(el => ({ name: el.name, code: el.name })) || []
+});
+
+const selectedRoles = ref(initRoles.value);
+const userRef = ref(props.user);
+const userProfileRef = ref(props.user_profile);
 const toast = useToast();
 const activeStep = ref(1);
-const selectedRoles = ref([{name: 'regular-user', code: 'regular-user'}]);
 
 const marital_status = ref([
     { name: 'single', code: 'single' },
@@ -79,6 +98,26 @@ const roles = ref([
     { name: 'regular-user', code: 'regular-user' },
 ]);
 
+// solo ejecuta una vez al montar
+onMounted(() => {
+    if(props.user) {
+        activeStep.value = 2;
+    }
+
+    if(props.user_profile) {
+        user_profile_form.first_names  = props.user_profile.first_names;
+        user_profile_form.last_names  = props.user_profile.last_names;
+        user_profile_form.age  = props.user_profile.age;
+        user_profile_form.birthdate  = props.user_profile.birthdate;
+        user_profile_form.blood_type  = props.user_profile.blood_type;
+        user_profile_form.address  = props.user_profile.address;
+        user_profile_form.zip_code  = props.user_profile.zip_code;
+        user_profile_form.ssn  = props.user_profile.ssn;
+        user_profile_form.bank  = props.user_profile.bank;
+        user_profile_form.interbank_clabe  = props.user_profile.interbank_clabe;
+    }
+});
+
 const isNotErrors = (obj) => {
   return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
 }
@@ -87,16 +126,26 @@ const submitUserCreate = (nextStep) => {
     user_form
     .transform((data) => ({
         ...data,
-        active_step: activeStep.value,
+        active_step: activeStep.value, // value = 1
     }))
-    .post(route('employees.store'), {
-        onSuccess: () => {
+    .post(route('users.store'), {
+        headers: {
+            'X-Inertia' : true,
+        },
+        preserveState: true,
+        onSuccess: (res) => {
+            activeStep.value = nextStep;
             toast.add({
                 severity: 'success',
                 summary: 'Registro de cuenta',
-                detail: 'Todos los campos son correctos'
+                detail: 'Se registro una nueva cuenta correctamente'
             });
-            activeStep.value = nextStep;
+
+            let new_user = res?.props?.inertia_session?.data?.user;
+            userRef.value = new_user;
+            //user_form.reset();
+            //submitEmployeeUpdate(nextStep, new_user); *
+            //router.visit(route('employees.index'));
         },
         onError: () => {
             toast.add({
@@ -104,14 +153,7 @@ const submitUserCreate = (nextStep) => {
                 summary: 'Registro de cuenta',
                 detail: 'Hay errores en los campos',
             });
-        },
-        onFinish: () => {
-            if(isNotErrors(user_form.errors)){
-                console.log('No hay errores, felicidades');
-            }else {
-                console.log('errores:', user_form.errors);
-            }
-        },
+        }
     });
 }
 
@@ -120,15 +162,22 @@ const submitUserProfileCreate = (nextStep) => {
     .transform((data) => ({
         ...data,
         active_step: activeStep.value,
+        user: userRef.value,
     }))
-    .post(route('employees.store'), {
-        onSuccess: () => {
+    .post(route('user-profiles.store'), {
+        onSuccess: (res) => {
+            activeStep.value = nextStep;
             toast.add({
                 severity: 'success',
                 summary: 'Registro de perfil de usuario',
                 detail: 'Todos los campos son correctos',
             });
-            activeStep.value = nextStep;
+
+            let new_user_profile = res?.props?.inertia_session?.data?.user_profile;
+            userProfileRef.value = new_user_profile;
+            //user_form.reset();
+            //submitEmployeeUpdate(nextStep);
+            //router.visit(route('employees.index')); *
         },
         onError: () => {
             toast.add({
@@ -147,10 +196,48 @@ const submitUserProfileCreate = (nextStep) => {
     });
 }
 
+const submitUserProfileUpdate = (nextStep) => {
+    user_profile_form
+    .transform((data) => ({
+        ...data,
+        active_step: activeStep.value,
+        user: userRef.value,
+    }))
+    .patch(route('user-profiles.update', {
+        user_profile: props.user_profile
+    }), {
+        onSuccess: () => {
+            activeStep.value = nextStep;
+            toast.add({
+                severity: 'success',
+                summary: 'Perfil de usuario',
+                detail: 'Perfil de usuario modificado correctamente',
+            });
+
+            //router.visit(route('employees.index'));
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Perfil de usuario',
+                detail: 'Hay errores en los campos',
+            });
+        },
+        onFinish: () => {
+            if(isNotErrors(user_profile_form.errors)){
+                console.log('No hay errores, felicidades');
+            }else {
+                console.log('errores:', user_profile_form.errors);
+            }
+        },
+    });
+}
+
 const submitEmployeeCreate = (nextStep) => {
     employee_form
     .transform((data) => ({
         ...data,
+        user: userRef.value,
         active_step: activeStep.value,
     }))
     .post(route('employees.store'), {
@@ -161,6 +248,7 @@ const submitEmployeeCreate = (nextStep) => {
                 detail: 'Se registro nuevo empleado correctamente'
             });
             activeStep.value = nextStep;
+            //submitEmployeeUpdate(nextStep);
         },
         onError: () => {
             toast.add({
@@ -179,13 +267,23 @@ const submitEmployeeCreate = (nextStep) => {
     });
 }
 
-const finishStep = (nextStep) => {
-    toast.add({  severity: 'info', summary: 'Test', detail: 'Estoy haciendo pruebas'});
-    console.log(user_form.errors.name);
+const submitEmployeeUpdate = (nextStep, new_user) => {
+    router.put(route('employees.update', props.employee), {
+        user: userRef.value,
+    }, {
+        onSuccess: () => {
+            console.log('Exito');
+        },
+        onError: () => {
+            console.log('Error');
+        },
+    });
+}
 
+watch([userRef, userProfileRef], ([ur, upf]) => {
+  console.log("ur, upf => ", ur, upf);
+});
 
-    activeStep.value = nextStep;
-};
 // FIN de lógica de programación
 // # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 </script>
@@ -207,7 +305,7 @@ const finishStep = (nextStep) => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <Stepper v-model:value="activeStep" class="basis-[40rem]">
                         <StepList>
-                            <Step v-if="canUsersCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="1">
+                            <Step v-if="canUsersCreate && !user" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="1">
                                 <div class="flex flex-row flex-auto gap-2" v-bind="a11yAttrs.root">
                                     <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
@@ -276,10 +374,10 @@ const finishStep = (nextStep) => {
                             </Step>
                         </StepList>
                         <StepPanels>
-                            <StepPanel v-if="canUsersCreate" v-slot="{ activateCallback }" :value="1">
+                            <StepPanel v-if="canUsersCreate && !user" v-slot="{ activateCallback }" :value="1">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                        Crear cuenta de usuario
+                                        {{ !user ? 'Crear cuenta de usuario' : 'Cuenta de usuario' }}
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
@@ -358,7 +456,7 @@ const finishStep = (nextStep) => {
                             <StepPanel v-if="canUserProfilesCreate" v-slot="{ activateCallback }" :value="2">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                        Crear perfil de usuario
+                                        {{ !user_profile ? 'Crear perfil de usuario' : 'Perfil de usuario' }}
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
@@ -366,10 +464,10 @@ const finishStep = (nextStep) => {
                                             :invalid="user_profile_form.errors?.first_names"
                                             v-model="user_profile_form.first_names"
                                             size="small"
-                                            id="name"
-                                            aria-describedby="name-help"
+                                            id="first_names"
+                                            aria-describedby="first_names-help"
                                             fluid />
-                                            <label for="name">Nombre(s)</label>
+                                            <label for="first_names">Nombre(s)</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.first_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.first_names }}</Message>
                                     </div>
@@ -379,10 +477,10 @@ const finishStep = (nextStep) => {
                                             :invalid="user_profile_form.errors?.last_names"
                                             v-model="user_profile_form.last_names"
                                             size="small"
-                                            id="email"
-                                            aria-describedby="email-help"
+                                            id="last_names"
+                                            aria-describedby="last_names-help"
                                             fluid />
-                                            <label for="email">Apellidos(s)</label>
+                                            <label for="last_names">Apellidos(s)</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.last_names}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.last_names }}</Message>
                                     </div>
@@ -391,13 +489,13 @@ const finishStep = (nextStep) => {
                                             <InputNumber
                                             :invalid="user_profile_form.errors?.age"
                                             v-model="user_profile_form.age"
-                                            inputId="on_integeronly"
+                                            inputId="on_age"
                                             :min="1"
                                             :max="100"
                                             showButtons
                                             :default-value="18"
                                             fluid />
-                                            <label for="on_integeronly">Edad</label>
+                                            <label for="on_age">Edad</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_profile_form.errors?.age}" severity="error" variant="simple" size="small">{{ user_profile_form.errors?.age }}</Message>
                                     </div>
@@ -408,6 +506,7 @@ const finishStep = (nextStep) => {
                                             v-model="user_profile_form.birthdate"
                                             showIcon
                                             iconDisplay="input"
+                                            :defaultValue="new Date('2006/12/25')"
                                             inputId="on_birthdate"
                                             fluid />
                                             <label for="on_birthdate">Fecha de nacimiento</label>
@@ -507,14 +606,15 @@ const finishStep = (nextStep) => {
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between">
-                                    <Button label="Volver" severity="secondary" icon="pi pi-arrow-left"
+                                    <Button v-if="canUsersCreate && !user" label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(1)" />
-
+                                    <span v-else></span>
                                     <div>
-                                        <Button class="me-2" label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
+                                        <Button label="Omitir" severity="secondary" icon="pi pi-arrow-right" iconPos="right"
+                                        class="me-2"
                                         @click="activateCallback(3)" />
-                                        <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
-                                            @click="submitUserProfileCreate(3)" />
+                                        <Button :label="!user_profile? 'Siguiente': 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
+                                            @click="!user_profile ? submitUserProfileCreate(3) : submitUserProfileUpdate(3)" />
                                     </div>
                                 </div>
                             </StepPanel>
