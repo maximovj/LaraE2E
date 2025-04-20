@@ -55,7 +55,7 @@ class EmployeeController extends Controller
     public function user_profile(Employee $employee)
     {
         return Inertia::render('Employee/UserProfile', [
-            'user' => $employee->user ?? null,
+            'user' => !isset($employee->user) ? null : $employee->user()->with(['roles:name'])->first(),
             'user_profile' => isset($employee->user->user_profile) ? $employee->user->user_profile : null,
             'employee' => $employee ?? null,
         ]);
