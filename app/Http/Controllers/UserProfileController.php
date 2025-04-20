@@ -48,7 +48,7 @@ class UserProfileController extends Controller
         $new_user_profile->fill($user_profile_attr);
 
         $user_id = intval(request()->input('user.id'));
-        $new_user_profile->user_id = $user_id;
+        $new_user_profile->user_id = $user_id ?? null;
 
         $new_user_profile->save();
 
@@ -56,6 +56,9 @@ class UserProfileController extends Controller
         ->back()
         ->with('inertia_session', [
             'message' => 'Perfil de usuario creado exitosamente',
+            'data' => [
+                'user_profile' => $new_user_profile,
+            ]
         ]);
     }
 
