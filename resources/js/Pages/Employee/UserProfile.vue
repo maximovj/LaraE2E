@@ -307,7 +307,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                             <StepPanel v-if="canUsersCreate && !user" v-slot="{ activateCallback }" :value="1">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                        Crear cuenta de usuario
+                                        {{ !user ? 'Crear cuenta de usuario' : 'Cuenta de usuario' }}
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
@@ -386,7 +386,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                             <StepPanel v-if="canUserProfilesCreate" v-slot="{ activateCallback }" :value="2">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
-                                        Crear perfil de usuario
+                                        {{ !user_profile ? 'Crear perfil de usuario' : 'Perfil de usuario' }}
                                     </div>
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
