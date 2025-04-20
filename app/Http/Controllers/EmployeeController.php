@@ -40,7 +40,12 @@ class EmployeeController extends Controller
     public function create()
     {
         //
-        return Inertia::render('Employee/Create', []);
+        return Inertia::render('Employee/Create',
+        [
+            'user' => null,
+            'user_profile' =>  null,
+            'employee' => null,
+        ]);
     }
 
     public function user(Employee $employee)
@@ -67,65 +72,36 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         //
-        $active_step = intval(request('active_step'));
+        $employee_attr = $request->validate([
+            'employee_number' => ['required', 'string', 'max:255'],
+            'job_title' => ['required', 'string', 'max:255'],
+            'position' => ['required', 'string', 'max:255'],
+            'hired_at' => ['required', 'date'],
+            'salary' => ['required', 'numeric'],
+            'shift' => ['required', 'string', 'max:255'],
+            'emergency_contact' => ['required', 'string', 'max:255'],
+        ]);
 
-        if($active_step === 1) {
-            $request->validate([
-                'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-                'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ]);
-            return response()->noContent(200);
-        }
+        /** @var \App\Models\User $authUserWithCompany */
+        $authUserWithCompany = auth()->user()->load('company');
+        /** @var \App\Models\User $authUserWithOffice */
+        $authUserWithOffice = auth()->user()->load('office');
 
-        if($active_step === 2) {
-            $request->validate([
-                'first_names' => ['required', 'string', 'max:255'],
-                'last_names' => ['required', 'string', 'max:255'],
-                'age' => ['required', 'numeric'],
-                'birthdate' => ['required', 'date'],
-                'blood_type' => ['required', 'string', 'max:10'],
-                'marital_status.code' => ['required', 'string'],
-                'address' => ['required', 'string', 'max:255'],
-                'zip_code' => ['required', 'string', 'max:255'],
-                'ssn' => ['required', 'string', 'max:255'],
-                'bank' => ['required', 'string', 'max:255'],
-                'interbank_clabe' => ['required', 'string', 'max:255'],
-            ]);
-            return response()->noContent(200);
-        }
+        $employee = new Employee();
+        $employee->fill($employee_attr);
 
-        if($active_step === 3) {
-            $employee_attr = $request->validate([
-                'employee_number' => ['required', 'string', 'max:255'],
-                'job_title' => ['required', 'string', 'max:255'],
-                'position' => ['required', 'string', 'max:255'],
-                'hired_at' => ['required', 'date'],
-                'salary' => ['required', 'numeric'],
-                'shift' => ['required', 'string', 'max:255'],
-                'emergency_contact' => ['required', 'string', 'max:255'],
-            ]);
+        $employee->status = 'active';
+        $user_id = intval(request()->input('user.id'));
+        $employee->user_id = $user_id;
+        $employee->company_id = $authUserWithCompany->company->id;
+        $employee->office_id = $authUserWithOffice->office->id;
+        $employee->save();
 
-            /** @var \App\Models\User $authUserWithCompany */
-            $authUserWithCompany = auth()->user()->load('company');
-            /** @var \App\Models\User $authUserWithOffice */
-            $authUserWithOffice = auth()->user()->load('office');
-
-            $employee = new Employee();
-            $employee->fill($employee_attr);
-            $employee->status = 'active';
-            $employee->company_id = $authUserWithCompany->company->id;
-            $employee->office_id = $authUserWithOffice->office->id;
-            $employee->save();
-
-            return redirect()
-            ->route('employees.index')
-            ->with('inertia_session', [
-                'success' => 'Empleado creado correctamente',
-            ]);
-        }
-
-        return response()->noContent(200);
+        return redirect()
+        ->route('employees.index')
+        ->with('inertia_session', [
+            'success' => 'Empleado creado correctamente',
+        ]);
     }
 
     /**
