@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -81,6 +82,16 @@ class UserController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'password' => ['nullable', 'sometimes', 'string', 'confirmed', Rules\Password::defaults()],
+            'roles' => [
+                'sometimes',
+                'array',
+                'size:1', // Asegura que solo venga 1 rol
+            ],
+            'roles.*.name' => [ // Valida el campo 'name' dentro de cada objeto del array
+                'required',
+                'string',
+                Rule::exists(Role::class, 'name'), // Verifica que el rol exista
+            ],
         ]);
 
         // Solo actualizar la contraseña si se proporcionó
@@ -92,6 +103,11 @@ class UserController extends Controller
 
         $user->fill($user_attr);
         $user->save();
+
+        if ($request->has('roles')) {
+            $roleName = $request->input('roles.0.name');
+            $user->syncRoles([$roleName]); // Asigna solo ese rol (elimina los anteriores)
+        }
 
         return redirect()
             ->back()
