@@ -3,7 +3,7 @@
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch, defineProps, onMounted } from 'vue';
 
-import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select } from 'primevue';
+import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select, MultiSelect } from 'primevue';
 
 import { FilterMatchMode } from '@primevue/core/api';
 import { useConfirm } from "primevue/useconfirm";
@@ -61,6 +61,11 @@ const user_profile_form = useForm({
     interbank_clabe: '',
 });
 
+const initRoles = computed(() => {
+  return props.user?.roles?.map(el => ({ name: el.name, code: el.name })) || []
+});
+
+const selectedRoles = ref(initRoles.value);
 const userRef = ref(props.user);
 const userProfileRef = ref(props.user_profile);
 const toast = useToast();
@@ -74,6 +79,12 @@ const marital_status = ref([
     { name: 'separated', code: 'separated' },
     { name: 'engaged', code: 'engaged' },
     { name: 'domestic_partnership', code: 'domestic_partnership' },
+]);
+
+const roles = ref([
+    { name: 'company-admin', code: 'company-admin' },
+    { name: 'office-manager', code: 'office-manager' },
+    { name: 'regular-user', code: 'regular-user' },
 ]);
 
 // solo ejecuta una vez al montar
@@ -348,6 +359,21 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                             <label for="in_password_confirmation">Confirmar Contraseña</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_form.errors?.password_confirmation}" severity="error" variant="simple" size="small">{{ user_form.errors?.password_confirmation }}</Message>
+                                    </div>
+                                    <div class="flex flex-col gap-2 field mb-4">
+                                        <FloatLabel class="w-full md:w-80" variant="on">
+                                            <MultiSelect id="on_roles"
+                                            :invalid="!!user_form.errors?.roles"
+                                            v-model="selectedRoles"
+                                            :options="roles"
+                                            optionLabel="name"
+                                            :maxSelectedLabels="1"
+                                            variant="filled"
+                                            filter
+                                            class="w-full md:w-80" />
+                                            <label for="on_roles">Rol</label>
+                                            <Message :class="{'hidden': !user_form.errors?.roles}" severity="error" variant="simple" size="small">{{ user_form.errors?.roles }}</Message>
+                                        </FloatLabel>
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-end gap-2">
