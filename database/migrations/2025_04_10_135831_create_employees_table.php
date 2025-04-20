@@ -19,17 +19,19 @@ return new class extends Migration
             ->foreignId('user_id')
             ->nullable()
             ->constrained('users', 'id')
-            ->onDelete('cascade')
+            ->onDelete('set null')
             ->onUpdate('cascade'); // Solo si tiene acceso al sistema
 
             $table
             ->foreignId('company_id')
+            ->nullable()
             ->constrained('companies', 'id')
             ->onDelete('cascade')
             ->onUpdate('cascade'); // Obligatorio
 
             $table
             ->foreignId('office_id')
+            ->nullable()
             ->constrained('offices', 'id')
             ->onDelete('cascade')
             ->onUpdate('cascade'); // Obligatorio
@@ -39,7 +41,7 @@ return new class extends Migration
             ->foreignId('manager_id')
             ->nullable()
             ->constrained('users', 'id')
-            ->onDelete('cascade')
+            ->onDelete('set null')
             ->onUpdate('cascade'); // Jefe directo (opcional)
 
             // Datos laborales
