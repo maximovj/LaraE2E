@@ -3,7 +3,7 @@
 import { Head, usePage, useForm, router } from '@inertiajs/vue3';
 import { ref, computed, watch, defineProps } from 'vue';
 
-import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select } from 'primevue';
+import { Step, Stepper, StepList, StepPanel, StepPanels, FloatLabel, InputNumber, DatePicker, Select, MultiSelect } from 'primevue';
 
 import { FilterMatchMode } from '@primevue/core/api';
 import { useConfirm } from "primevue/useconfirm";
@@ -34,6 +34,8 @@ const props = defineProps({
 });
 
 //const inertia_session = computed(() => usePage().props.inertia_session);
+const initRoles = computed(() => [...props?.user?.roles?.map(el => ({ name: el.name, code: el.name }))] );
+const selectedRoles = ref(initRoles.value);
 const toast = useToast();
 const activeStep = ref(1);
 const userRef = ref(props.user);
@@ -50,10 +52,15 @@ const user_form = useForm({
     password_confirmation: '',
 });
 
+const roles = ref([
+    { name: 'company-admin', code: 'company-admin' },
+    { name: 'office-manager', code: 'office-manager' },
+    { name: 'regular-user', code: 'regular-user' },
+]);
+
 const isNotErrors = (obj) => {
   return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length === 0;
 }
-
 
 const submitUserCreate = (nextStep) => {
     user_form
@@ -72,7 +79,6 @@ const submitUserCreate = (nextStep) => {
                 summary: 'Registro de cuenta',
                 detail: 'Se registro una nueva cuenta correctamente'
             });
-
 
             let new_user = res?.props?.inertia_session?.data?.user;
             userRef.value = new_user;
@@ -94,13 +100,6 @@ const submitUserCreate = (nextStep) => {
 const submitEmployeeUpdate = (nextStep, new_user) => {
     router.put(route('employees.update', props.employee), {
         user: userRef.value,
-    }, {
-        onSuccess: () => {
-            console.log('Exito');
-        },
-        onError: () => {
-            console.log('Error');
-        },
     });
 }
 
@@ -108,6 +107,7 @@ const submitUserUpdate = (nextStep) => {
     user_form
     .transform((data) => ({
         ...data,
+        roles: selectedRoles.value,
         active_step: activeStep.value, // value = 1
     }))
     .patch(route(props.action, props.user), {
@@ -207,7 +207,7 @@ watch(userRef, (newValue, oldValue) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="user_form.errors?.name"
+                                            :invalid="!!user_form.errors?.name"
                                             v-model="user_form.name"
                                             size="small"
                                             id="name"
@@ -220,7 +220,7 @@ watch(userRef, (newValue, oldValue) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel>
                                             <InputText
-                                            :invalid="user_form.errors?.email"
+                                            :invalid="!!user_form.errors?.email"
                                             v-model="user_form.email"
                                             type="email"
                                             size="small"
@@ -234,7 +234,7 @@ watch(userRef, (newValue, oldValue) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <Password
-                                            :invalid="user_form.errors?.password"
+                                            :invalid="!!user_form.errors?.password"
                                             v-model="user_form.password"
                                             toggleMask
                                             inputId="in_password"
@@ -246,7 +246,7 @@ watch(userRef, (newValue, oldValue) => {
                                     <div class="flex flex-col gap-2 field mb-4">
                                         <FloatLabel variant="in">
                                             <Password
-                                            :invalid="user_form.errors?.password_confirmation"
+                                            :invalid="!!user_form.errors?.password_confirmation"
                                             v-model="user_form.password_confirmation"
                                             toggleMask
                                             inputId="in_password_confirmation"
@@ -254,6 +254,21 @@ watch(userRef, (newValue, oldValue) => {
                                             <label for="in_password_confirmation">Confirmar Contraseña</label>
                                         </FloatLabel>
                                         <Message :class="{'hidden': !user_form.errors?.password_confirmation}" severity="error" variant="simple" size="small">{{ user_form.errors?.password_confirmation }}</Message>
+                                    </div>
+                                    <div class="flex flex-col gap-2 field mb-4">
+                                        <FloatLabel class="w-full md:w-80" variant="on">
+                                            <MultiSelect id="on_roles"
+                                            :invalid="!!user_form.errors?.roles"
+                                            v-model="selectedRoles"
+                                            :options="roles"
+                                            optionLabel="name"
+                                            :maxSelectedLabels="1"
+                                            variant="filled"
+                                            filter
+                                            class="w-full md:w-80" />
+                                            <label for="on_roles">Rol</label>
+                                            <Message :class="{'hidden': !user_form.errors?.roles}" severity="error" variant="simple" size="small">{{ user_form.errors?.roles }}</Message>
+                                        </FloatLabel>
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between gap-2">
