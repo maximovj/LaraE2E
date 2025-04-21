@@ -801,8 +801,12 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between">
-                                    <Button label="Volver" severity="secondary" icon="pi pi-arrow-left"
+                                    <Button v-if="canUsersUpdate && !user" label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(2)" />
+                                    <Button v-else label="Volver" severity="secondary" icon="pi pi-arrow-left" iconPos="left"
+                                    @click.stop="router.visit(route('employees.index'))"
+                                    />
+
                                     <Button label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
                                         @click="submitEmployeeUpdate(4)" />
                                 </div>
