@@ -6,6 +6,7 @@ use App\Http\Resources\EmployeeResource;
 use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 
@@ -89,12 +90,18 @@ class EmployeeController extends Controller
 
         $employee = new Employee();
         $employee->fill($employee_attr);
-
         $employee->status = 'active';
-        $user_id = intval(request()->input('user.id'));
-        $employee->user_id = $user_id;
         $employee->company_id = $authUserWithCompany->company->id;
         $employee->office_id = $authUserWithOffice->office->id;
+
+        // Verificar si existe el usuario
+        if($user_id = $request->has('user.id')) {
+            $request->validate([
+                'user.id' => ['required', Rule::exists(User::class), Rule::unique(Employee::class, 'user_id')],
+            ]);
+            $employee->user_id = $user_id;
+        }
+
         $employee->save();
 
         return redirect()
