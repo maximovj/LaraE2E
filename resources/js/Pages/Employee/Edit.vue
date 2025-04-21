@@ -19,9 +19,9 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 const { getCurrentPermissions } = useAuthCache();
 
 // Verificar permisos
-const canUsersCreate = computed(() => getCurrentPermissions().includes('users.create'));
-const canUserProfilesCreate = computed(() => getCurrentPermissions().includes('user_profiles.create'));
-const canEmployeesCrete = computed(() => getCurrentPermissions().includes('employees.delete'));
+const canUsersUpdate = computed(() => getCurrentPermissions().includes('users.update'));
+const canUserProfilesUpdate = computed(() => getCurrentPermissions().includes('user_profiles.update'));
+const canEmployeesUpdate = computed(() => getCurrentPermissions().includes('employees.update'));
 
 const props = defineProps({
     user: {
@@ -98,6 +98,10 @@ const roles = ref([
 
 // solo ejecuta una vez al montar
 onMounted(() => {
+
+    if(canUsersUpdate.value == false) {
+        activeStep.value = 2;
+    }else
     if(props.user) {
         user_form.name = props.user.name;
         user_form.email = props.user.email;
@@ -105,6 +109,9 @@ onMounted(() => {
         user_form.password_confirmation = props.user.password_confirmation;
     }
 
+    if(canUserProfilesUpdate.value == false) {
+        activeStep.value = 3;
+    } else
     if(props.user_profile) {
         user_profile_form.first_names  = props.user_profile.first_names;
         user_profile_form.last_names  = props.user_profile.last_names;
@@ -126,8 +133,9 @@ onMounted(() => {
         employee_form.status = props.employee.status;
         employee_form.salary = props.employee.salary;
         employee_form.shift = props.employee.shift;
-        employee_form.emergency_contact = new Date(props.employee.emergency_contact);
+        employee_form.emergency_contact = props.employee.emergency_contact;
     }
+
 });
 
 const isNotErrors = (obj) => {
@@ -262,7 +270,6 @@ const submitUserProfileUpdate = (nextStep) => {
                 summary: 'Perfil de usuario',
                 detail: 'Perfil de usuario modificado correctamente',
             });
-
             //router.visit(route('employees.index'));
         },
         onError: () => {
@@ -377,7 +384,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <Stepper v-model:value="activeStep" class="basis-[40rem]">
                         <StepList>
-                            <Step v-if="canUsersCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="1">
+                            <Step v-if="canUsersUpdate && !user" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="1">
                                 <div class="flex flex-row flex-auto gap-2" v-bind="a11yAttrs.root">
                                     <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
@@ -389,7 +396,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                     <Divider />
                                 </div>
                             </Step>
-                            <Step  v-if="canUserProfilesCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="2">
+                            <Step  v-if="canUserProfilesUpdate && !user_profile" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="2">
                                 <div class="flex flex-row flex-auto gap-2 pl-2" v-bind="a11yAttrs.root">
                                     <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
@@ -408,7 +415,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                     <Divider />
                                 </div>
                             </Step>
-                            <Step  v-if="canUserProfilesCreate" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="3">
+                            <Step  v-if="canEmployeesUpdate && employee" v-slot="{ activateCallback, value, a11yAttrs }" asChild :value="3">
                                 <div class="flex flex-row flex-auto gap-2 pl-2" v-bind="a11yAttrs.root">
                                     <button class="bg-transparent border-0 inline-flex flex-col gap-2">
                                         <span :class="[
@@ -446,7 +453,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                             </Step>
                         </StepList>
                         <StepPanels>
-                            <StepPanel v-if="canUsersCreate" v-slot="{ activateCallback }" :value="1">
+                            <StepPanel v-if="canUsersUpdate && !user" v-slot="{ activateCallback }" :value="1">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                        Cuenta de usuario
@@ -525,7 +532,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                         @click="submitUserUpdate(2)" />
                                 </div>
                             </StepPanel>
-                            <StepPanel v-if="canUserProfilesCreate" v-slot="{ activateCallback }" :value="2">
+                            <StepPanel v-if="canUserProfilesUpdate & !user_profile" v-slot="{ activateCallback }" :value="2">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                         Perfil de usuario
@@ -678,7 +685,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between">
-                                    <Button v-if="canUsersCreate" label="Volver" severity="secondary" icon="pi pi-arrow-left"
+                                    <Button v-if="canUsersUpdate" label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(1)" />
                                     <span v-else></span>
                                     <div>
@@ -690,7 +697,7 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                     </div>
                                 </div>
                             </StepPanel>
-                            <StepPanel v-slot="{ activateCallback }" :value="3">
+                            <StepPanel v-if="canEmployeesUpdate && employee" v-slot="{ activateCallback }" :value="3">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                         Empleado
