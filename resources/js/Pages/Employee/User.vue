@@ -45,6 +45,7 @@ const userRef = ref(props.user);
 const { getCurrentPermissions } = useAuthCache();
 
 // Verificar permisos
+const canUsersUpdate = computed(() => getCurrentPermissions().includes('users.update'));
 const canUsersCreate = computed(() => getCurrentPermissions().includes('users.create'));
 
 // Crear Hook para formularios
@@ -169,7 +170,7 @@ watch(userRef, (newValue, oldValue) => {
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                     <Stepper v-model:value="activeStep" class="basis-[40rem]">
                         <StepList>
-                            <Step v-if="canUsersCreate" v-slot="{ value, a11yAttrs }" asChild :value="1">
+                            <Step v-slot="{ value, a11yAttrs }" asChild :value="1">
                                 <div class="flex flex-row flex-auto gap-2" v-bind="a11yAttrs.root">
                                     <button
                                         class="bg-transparent border-0 inline-flex flex-col gap-2">
@@ -202,7 +203,7 @@ watch(userRef, (newValue, oldValue) => {
                             </Step>
                         </StepList>
                         <StepPanels>
-                            <StepPanel v-if="canUsersCreate" v-slot="{ activateCallback }" :value="1">
+                            <StepPanel v-slot="{ activateCallback }" :value="1">
                                 <div class="flex flex-col gap-2 mx-auto" style="min-height: 16rem; max-width: 20rem">
                                     <div class="text-center mt-4 mb-4 text-xl font-semibold">
                                         {{ !user ? 'Crear cuenta de usuario' : 'Cuenta de usuario'  }}
@@ -275,9 +276,13 @@ watch(userRef, (newValue, oldValue) => {
                                     </div>
                                 </div>
                                 <div class="flex pt-6 justify-between gap-2">
-                                    <Button label="Volver" severity="secondary" icon="pi pi-arrow-left" iconPos="left" />
-                                    <Button :label="!user ? 'Crear' : 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
-                                        @click="!user ? submitUserCreate(2) : submitUserUpdate(2)" />
+                                    <Button label="Volver" severity="secondary" icon="pi pi-arrow-left" iconPos="left"
+                                    @click.stop="router.visit(route('employees.index'))"
+                                    />
+                                    <Button v-if="canUsersCreate && !user" :label="!user ? 'Crear' : 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
+                                        @click="submitUserCreate(2)" />
+                                    <Button v-if="canUsersUpdate && user" :label="!user ? 'Crear' : 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
+                                        @click="submitUserUpdate(2)" />
                                 </div>
                             </StepPanel>
                             <StepPanel v-slot="{ activateCallback }" :value="2">
