@@ -121,7 +121,11 @@ class EmployeeController extends Controller
     {
         //
         // TODO: Crear una vista vue para editar información del empleado
-        dd('Editar un empleado', $employee);
+        return Inertia::render('Employee/Edit', [
+            'user' => !isset($employee->user) ? null : $employee->user()->with(['roles:name'])->first(),
+            'user_profile' => isset($employee->user->user_profile) ? $employee->user->user_profile : null,
+            'employee' => $employee ?? null,
+        ]);
     }
 
     /**
