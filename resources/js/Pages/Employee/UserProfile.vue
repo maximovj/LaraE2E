@@ -21,6 +21,7 @@ const { getCurrentPermissions } = useAuthCache();
 // Verificar permisos
 const canUsersCreate = computed(() => getCurrentPermissions().includes('users.create'));
 const canUserProfilesCreate = computed(() => getCurrentPermissions().includes('user_profiles.create'));
+const canUserProfilesUpdate = computed(() => getCurrentPermissions().includes('user_profiles.update'));
 const canEmployeesCrete = computed(() => getCurrentPermissions().includes('employees.delete'));
 
 const props = defineProps({
@@ -538,11 +539,15 @@ watch([userRef, userProfileRef], ([ur, upf]) => {
                                 <div class="flex pt-6 justify-between">
                                     <Button v-if="canUsersCreate && !user" label="Volver" severity="secondary" icon="pi pi-arrow-left"
                                         @click="activateCallback(1)" />
-                                    <span v-else></span>
+                                    <Button v-else label="Volver" severity="secondary" icon="pi pi-arrow-left" iconPos="left"
+                                    @click.stop="router.visit(route('employees.index'))"
+                                    />
 
                                     <div>
-                                        <Button :label="!user_profile? 'Siguiente': 'Modificar'" icon="pi pi-arrow-right" iconPos="right"
-                                            @click="!user_profile ? submitUserProfileCreate(3) : submitUserProfileUpdate(3)" />
+                                        <Button v-if="canUserProfilesCreate && !user_profile" label="Siguiente" icon="pi pi-arrow-right" iconPos="right"
+                                            @click="submitUserProfileCreate(3)" />
+                                        <Button v-if="canUserProfilesUpdate && user_profile" label="Modificar" icon="pi pi-arrow-right" iconPos="right"
+                                            @click="submitUserProfileUpdate(3)" />
                                     </div>
                                 </div>
                             </StepPanel>
