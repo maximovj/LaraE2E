@@ -41,6 +41,10 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/vcalendar', function () {
+    return Inertia::render('RegularUser/Index');
+})->middleware(['auth', 'verified'])->name('vcalendar');
+
 Route::resource('/employees', EmployeeController::class)
     ->middleware(['auth', 'verified', 'role:company-admin|office-manager']);
 
