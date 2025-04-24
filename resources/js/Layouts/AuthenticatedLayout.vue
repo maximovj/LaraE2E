@@ -31,12 +31,18 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </NavLink>
-                                    <NavLink
-                                    :href="route('employees.index')"
-                                    :active="route().current('employees.index')"
-                                    v-role="['company-admin', 'office-manager']">
-                                        Employees
-                                    </NavLink>
+                                <NavLink
+                                :href="route('employees.index')"
+                                :active="route().current('employees.index')"
+                                v-role="['company-admin', 'office-manager']">
+                                    Employees
+                                </NavLink>
+                                <NavLink
+                                :href="route('work-activities.index')"
+                                :active="route().current('work-activities.index')"
+                                v-role="['regular-user']">
+                                    Work Activities
+                                </NavLink>
                             </div>
                         </div>
 
