@@ -33,8 +33,8 @@ class DatabaseSeeder extends Seeder
             OfficesSeeder::class,
             EmployeesSeeder::class,
             WorkDaySeeder::class,
-            WorkEventSeeder::class,
             WorkActivitySeeder::class,
+            WorkEventSeeder::class,
         ]);
 
     }
