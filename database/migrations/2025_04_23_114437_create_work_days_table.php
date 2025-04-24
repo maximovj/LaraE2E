@@ -34,7 +34,8 @@ return new class extends Migration
                 'paid',
                 'unpaid'
             ])->default('pending'); // estado
-            $table->text('details')->nullable(); // notas
+            $table->text('details')->nullable(); // detalles
+            $table->text('note')->nullable(); // notas
             $table->string('tags')->nullable();
 
             // Crear indices

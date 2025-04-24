@@ -26,12 +26,12 @@ return new class extends Migration
             ->cascadeOnDelete();
 
             $table->string('title'); // Ej: "Reunión con equipo"
-            $table->string('subtitle'); // Ej: "Sobre los avances de ayer"
-            $table->text('description'); // Detalles
+            $table->string('subtitle')->nullable(); // Ej: "Sobre los avances de ayer"
+            $table->text('description')->nullable(); // Detalles
             $table->time('start_time')->nullable(); // Hora de inicio
             $table->time('end_time')->nullable(); // Hora de fin
             $table->integer('duration_hours')->default(0); // Duración (puede calcularse automáticamente)
-            $table->text('notes'); // Notas adicionales
+            $table->text('notes')->nullable(); // Notas adicionales
             $table->string('tags')->nullable(); // Etiquetas
             $table->enum('status',
             [
