@@ -4,7 +4,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
-use App\Models\UserProfile;
+use App\Http\Controllers\WorkActivityController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,9 +41,8 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/vcalendar', function () {
-    return Inertia::render('RegularUser/Index');
-})->middleware(['auth', 'verified'])->name('vcalendar');
+Route::resource('work-activities', WorkActivityController::class)
+    ->middleware(['auth', 'verified', 'role:regular-user']);
 
 Route::resource('/employees', EmployeeController::class)
     ->middleware(['auth', 'verified', 'role:company-admin|office-manager']);
