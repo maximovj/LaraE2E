@@ -14,9 +14,24 @@ class WorkActivityController extends Controller
      */
     public function index()
     {
+        /*
         $employee = auth()->user()->load('employee')->employee;
         $work_days = WorkDay::query()->where('employee_id', $employee->id)->with('events')->get();
         $all_events = $work_days->pluck('events')->collapse();
+        */
+        $employee = auth()->user()->employee;
+
+        $all_events = WorkActivity::with('work_event', 'work_day')
+            ->where('employee_id', $employee->id)
+            ->get()
+            ->pluck('work_event')
+            ->filter()
+            ->push([
+                'title' => 'Nuevo',
+                'start' => now(),
+                'end' => now(),
+            ]);
+
         return Inertia::render('WorkActivity/Index', [
             'events' => $all_events->toArray(),
         ]);
@@ -51,7 +66,7 @@ class WorkActivityController extends Controller
      */
     public function edit(WorkActivity $workActivity)
     {
-        //
+        dd($workActivity);
     }
 
     /**
