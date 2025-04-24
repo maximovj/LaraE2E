@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasOne(UserProfile::class, 'user_id', 'id');
     }
 
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id', 'id');
+    }
+
     // Obtener una company
     // Relación a través de employees
     public function company()
@@ -61,10 +66,10 @@ class User extends Authenticatable
         return $this->hasOneThrough(
             Company::class,
             Employee::class,
-            'user_id', // desde modelo User (actual)
+            'user_id', // desde modelo Employee
             'id', // desde modelo User (actual)
             'id', // desde modelo Company
-            'company_id' // desde modelo Company
+            'company_id' // desde modelo Employee
         );
     }
 
@@ -76,10 +81,10 @@ class User extends Authenticatable
         return $this->hasOneThrough(
             Office::class,
             Employee::class,
-            'user_id', // desde modelo User (actual)
+            'user_id', // desde modelo Employee
             'id', // desde modelo User (actual)
             'id', // desde modelo Office
-            'office_id' // desde modelo Office
+            'office_id' // desde modelo Employee
         );
     }
 
