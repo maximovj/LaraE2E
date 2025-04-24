@@ -110,6 +110,7 @@ class EmployeesSeeder extends Seeder
                 }
             }
 
+            /*
             // Crear empleados aleatorios para la compañía (sin usuario asociado)
             Employee::factory()
                 ->count(5) // Ajusta según necesidad
@@ -117,6 +118,7 @@ class EmployeesSeeder extends Seeder
                 ->create([
                     'office_id' => $company->offices->random()->id ?? null
                 ]);
+            */
         }
 
         // Empleados genéricos (sin compañía específica)
