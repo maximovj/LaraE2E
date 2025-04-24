@@ -25,11 +25,6 @@ import { FilterMatchMode } from '@primevue/core/api';
 const { getCurrentPermissions } = useAuthCache();
 
 const props = defineProps({
-    employees: {
-        type: Array,
-        required: true,
-        default: () => [] // Valor por defecto
-    },
     events: {
         type: Array,
         required: true,
@@ -85,24 +80,45 @@ const calendarOptions = ref({
     eventClick: function (info) {
         info.jsEvent.preventDefault(); // don't let the browser navigate
 
-        alert('Event: ' + info.event.title);
-        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-        alert('View: ' + info.view.type);
+        /*
+        //alert('Event: ' + info.event.title);
+        //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        //alert('View: ' + info.view.type);
+
         console.log('info',info);
+        console.log('info.el',info.el);
         console.log('info.event',info.event);
         console.log('info.jsEvent',info.jsEvent);
         console.log('info.view',info.view);
+
+        // Acceder a work_activity_id
+        const workActivityId = info.event.extendedProps.work_activity_id;
+        console.log('Work Activity ID:', workActivityId);
+
+        // También puedes acceder a otras propiedades estándar
+        console.log('Event title:', info.event.title);
+        console.log('Start date:', info.event.start);
+        console.log('End date:', info.event.end);
 
         // change the border color just for fun
         info.el.style.borderColor = 'red';
         //info.el.fcSeg.eventRange.range.end = new Date('2025-04-22T14:30:00');
         //info.el.fcSeg.end = new Date('2025-04-22T14:30:00');
+        */
 
         /*
         if (info.event.url) {
             window.open(info.event.url);
         }
         */
+
+        const workActivityId = info.event.extendedProps.work_activity_id;
+        if (workActivityId) {
+            // Redirige a la ruta de edición usando Inertia.js
+            router.get(route('work-activities.edit', workActivityId));
+        } else {
+            console.error("No se encontró work_activity_id en el evento");
+        }
     }
 });
 
