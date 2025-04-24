@@ -29,6 +29,11 @@ const props = defineProps({
         type: Array,
         required: true,
         default: () => [] // Valor por defecto
+    },
+    events: {
+        type: Array,
+        required: true,
+        default: () => [] // Valor por defecto
     }
 });
 
@@ -75,40 +80,7 @@ const calendarOptions = ref({
         },
     },
     events: [
-        {
-            title: 'Reunión',
-            start: new Date(),
-            overlap: true,
-            endEditable: false,
-            startEditable: false,
-            durationEditable: false,
-            url: 'https://google.com/',
-        },
-        {
-            title: 'Meeting',
-            start: '2025-04-21T14:30:00',
-            overlap: true,
-            droppable: true,
-            startEditable: true,
-            endEditable: true,
-            durationEditable: true,
-            url: 'https://google.com/',
-            extendedProps: {
-                status: 'done'
-            }
-        },
-        {
-            title: 'Birthday Party',
-            start: '2025-04-21T07:00:00',
-            backgroundColor: 'green',
-            borderColor: 'green',
-            overlap: true,
-            droppable: true,
-            startEditable: true,
-            endEditable: true,
-            durationEditable: true,
-            url: 'https://google.com/',
-        }
+        ...props.events
     ],
     eventClick: function (info) {
         info.jsEvent.preventDefault(); // don't let the browser navigate
