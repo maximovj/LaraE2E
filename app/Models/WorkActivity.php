@@ -60,9 +60,14 @@ class WorkActivity extends Model
         return $this->belongsTo(Employee::class);
     }
 
-    public function workDay()
+    public function work_day()
     {
         return $this->belongsTo(WorkDay::class);
+    }
+
+    public function work_event()
+    {
+        return $this->hasOne(WorkEvent::class);
     }
 
 }
