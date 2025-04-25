@@ -6,6 +6,8 @@ use App\Models\Employee;
 use App\Models\WorkActivity;
 use App\Models\WorkDay;
 use App\Models\WorkEvent;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Seeder;
 
 class WorkEventSeeder extends Seeder
@@ -20,16 +22,38 @@ class WorkEventSeeder extends Seeder
             $workDays = WorkDay::where('employee_id', $employee->id)->get();
 
             foreach ($workDays as $day) {
-                $workActivity = WorkActivity::where('work_day_id', $day->id)->first();
-                if($workActivity) {
+
+                // Obtener todo las actividades del día trabajado existentes del empleado
+                $workActivities = WorkActivity::where('work_day_id', $day->id)->get();
+
+                foreach($workActivities as $work_activity) {
+                    $day_date = Carbon::parse($day->date)->toDateString();
+                    $work_activity_start_time = Carbon::parse($work_activity->start_time)->format('H:i:s');
+                    $work_activity_end_time = Carbon::parse($work_activity->end_time)->format('H:i:s');
+                    $work_activity_status = $work_activity->status;
+
+                    $now = Carbon::now();
+                    $start = Carbon::createFromFormat('Y-m-d H:i:s', "$day_date $work_activity_start_time")->format('Y-m-d H:i:s');
+                    $end = Carbon::createFromFormat('Y-m-d H:i:s', "$day_date $work_activity_end_time")->format('Y-m-d H:i:s');
+                    $color = $this->getColorByStatus($work_activity_status);
+                    // Verifica si $end ya pasó Y si la diferencia es mayor o igual a 15 días
+                    $endPassed_isEditable = ($now->diffInDays($end) >= 15) ? false : true;
+
                     // Crear 1-3 eventos por día de trabajo
                     WorkEvent::factory()
-                        ->count(1)
                         ->create([
                             'employee_id' => $employee->id,
                             'work_day_id' => $day->id,
-                            'work_activity_id' => $workActivity->id,
-                        ]);
+                            'work_activity_id' => $work_activity->id,
+                            'backgroundColor' => $color,
+                            'borderColor' => $color,
+                            'overlap' => true,
+                            'editable' => $endPassed_isEditable,
+                            'startEditable' => $endPassed_isEditable,
+                            'durationEditable' => $endPassed_isEditable,
+                            'start' => $start,
+                            'end' => $end,
+                    ]);
                 }
             }
         }
@@ -41,4 +65,19 @@ class WorkEventSeeder extends Seeder
             ->create();
         */
     }
+
+    public function getColorByStatus($status)
+    {
+        $status_available = [
+            'approved' => 'lime',
+            'rejected' => 'red',
+            'paid' => 'green',
+            'unpaid' => 'lightgray',
+            'pending' => '', // 'pending'
+            '' => '', // 'pending'
+        ];
+        return isset($status_available[$status]) ? $status_available[$status] : '';
+    }
+
+
 }

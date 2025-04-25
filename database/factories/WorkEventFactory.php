@@ -16,25 +16,33 @@ class WorkEventFactory extends Factory
     {
         $start = $this->faker->dateTimeBetween('-1 month', '+1 month');
         $end = $this->faker->dateTimeBetween($start, $start->format('Y-m-d H:i:s') . '+3 hours');
+        $editable = $this->faker->boolean(80);
 
         return [
             'employee_id' => Employee::factory(),
             'work_day_id' => WorkDay::factory(),
             'work_activity_id' => WorkActivity::factory(),
             'title' => $this->faker->sentence(3),
-            'allDay' => $this->faker->boolean(30), // 30% de probabilidad de ser evento de día completo
+            'allDay' => $this->faker->boolean(10), // 30% de probabilidad de ser evento de día completo
             'start' => $start,
             'end' => $end,
             'url' => $this->faker->optional()->url,
-            'classnames' => $this->faker->randomElement(['meeting', 'task', 'break', 'training']),
+            'classnames' => '',
             'backgroundColor' => '',
             'borderColor' => '',
             'textColor' => '',
-            'overlap' => $this->faker->boolean(80),
-            'editable' => $this->faker->boolean(70),
-            'startEditable' => $this->faker->boolean(60),
-            'durationEditable' => $this->faker->boolean(60),
-            'display' => $this->faker->boolean(90),
+            'overlap' => $editable,
+            'editable' => $editable,
+            'startEditable' => $editable,
+            'durationEditable' => $editable,
+            'display' => $this->faker->randomElement([
+                'auto',
+                'block',
+                'list-item',
+                'background',
+                'inverse-background',
+                'none',
+            ]),
             'created_at' => now(),
             'updated_at' => now(),
         ];
