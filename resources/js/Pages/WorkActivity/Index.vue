@@ -77,48 +77,103 @@ const calendarOptions = ref({
     events: [
         ...props.events
     ],
-    eventClick: function (info) {
-        info.jsEvent.preventDefault(); // don't let the browser navigate
+    eventDrop(info) {
+        console.log(info);
+        // Obtener las fechas original y nueva
+        const originalStart = info.oldEvent.start;
+        const newStart = info.event.start;
+        const originalEnd = info.oldEvent.end;
+        const newEnd = info.event.end;
 
-        /*
-        //alert('Event: ' + info.event.title);
-        //alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
-        //alert('View: ' + info.view.type);
-
-        console.log('info',info);
-        console.log('info.el',info.el);
-        console.log('info.event',info.event);
-        console.log('info.jsEvent',info.jsEvent);
-        console.log('info.view',info.view);
-
-        // Acceder a work_activity_id
-        const workActivityId = info.event.extendedProps.work_activity_id;
-        console.log('Work Activity ID:', workActivityId);
-
-        // También puedes acceder a otras propiedades estándar
-        console.log('Event title:', info.event.title);
-        console.log('Start date:', info.event.start);
-        console.log('End date:', info.event.end);
-
-        // change the border color just for fun
-        info.el.style.borderColor = 'red';
-        //info.el.fcSeg.eventRange.range.end = new Date('2025-04-22T14:30:00');
-        //info.el.fcSeg.end = new Date('2025-04-22T14:30:00');
-        */
-
-        /*
-        if (info.event.url) {
-            window.open(info.event.url);
-        }
-        */
-
-        const workActivityId = info.event.extendedProps.work_activity_id;
-        if (workActivityId) {
-            // Redirige a la ruta de edición usando Inertia.js
-            router.get(route('work-activities.edit', workActivityId));
+        // Comprobar si el día ha cambiado
+        if (
+            originalStart.getDate() !== newStart.getDate() ||
+            originalStart.getMonth() !== newStart.getMonth() ||
+            originalStart.getFullYear() !== newStart.getFullYear() ||
+            (originalEnd && newEnd && (
+                originalEnd.getDate() !== newEnd.getDate() ||
+                originalEnd.getMonth() !== newEnd.getMonth() ||
+                originalEnd.getFullYear() !== newEnd.getFullYear()
+            ))
+        ) {
+            // Revertir el cambio si el día es diferente
+            info.revert();
+            // Opcional: mostrar un mensaje al usuario
+            alert('Solo se puede cambiar la hora, no el día del evento.');
         } else {
-            console.error("No se encontró work_activity_id en el evento");
+            // Aquí puedes manejar el cambio de hora si lo necesitas
+            console.log('Hora cambiada:', {
+                oldStart: originalStart,
+                newStart: newStart,
+                oldEnd: originalEnd,
+                newEnd: newEnd
+            });
         }
+    },
+    eventResize(info) {
+        const originalStart = info.oldEvent.start;
+        const newStart = info.event.start; // No cambia en resize
+        const originalEnd = info.oldEvent.end;
+        const newEnd = info.event.end;
+
+        // Comprobar si el día del final ha cambiado
+        if (originalEnd && newEnd && (
+            originalEnd.getDate() !== newEnd.getDate() ||
+            originalEnd.getMonth() !== newEnd.getMonth() ||
+            originalEnd.getFullYear() !== newEnd.getFullYear()
+        )) {
+            info.revert();
+            alert('Solo se puede cambiar la hora, no el día del evento.');
+        } else {
+            console.log('Duración cambiada:', {
+                start: newStart,
+                oldEnd: originalEnd,
+                newEnd: newEnd
+            });
+        }
+    },
+    eventChange(info){
+        console.log('eventChange.info => ', info);
+        // Obtener el evento actualizado
+        const event = info.event;
+        // Obtener el evento actual
+        const oldEvent = info.oldEvent;
+
+        // Datos básicos del evento
+        const eventData = {
+            id: oldEvent.id,  // ID del evento
+            title: oldEvent.title,  // Título del evento
+            start: oldEvent.start,  // Fecha/hora de inicio (objeto Date)
+            end: oldEvent.end,  // Fecha/hora de fin (objeto Date, puede ser null)
+            allDay: oldEvent.allDay,  // Si es un evento de todo el día (booleano)
+
+            // Propiedades extendidas (custom data que hayas añadido al evento)
+            extendedProps: oldEvent.extendedProps,
+
+            // Otros datos útiles
+            backgroundColor: oldEvent.backgroundColor,
+            borderColor: oldEvent.borderColor,
+            textColor: oldEvent.textColor,
+        };
+
+        console.log('Todos los datos del evento:', eventData);
+    },
+    eventClick (info) {
+        info.jsEvent.preventDefault(); // don't let the browser navigate
+        const workActivityEditable = info.event.durationEditable;
+        const workActivityId = info.event.extendedProps.work_activity_id;
+
+        if (!workActivityId) {
+            confirm("No se encontró work_activity_id en el evento");
+            return;
+        }else
+        if(!workActivityEditable) {
+            confirm("El work_activity_id en el evento está bloqueado");
+            return;
+        }
+
+        // Redirige a la ruta de edición usando Inertia.js
+        router.get(route('work-activities.edit', workActivityId));
     }
 });
 
