@@ -44,7 +44,14 @@ return new class extends Migration
             $table->boolean('editable')->default(true);
             $table->boolean('startEditable')->default(true);
             $table->boolean('durationEditable')->default(true);
-            $table->boolean('display')->default(true);
+            $table->enum('display', [
+                'auto',
+                'block',
+                'list-item',
+                'background',
+                'inverse-background',
+                'none',
+            ])->default('auto');
 
             // Crear indices
             // Más rápido para: SELECT con WHERE, JOIN, ORDER BY
