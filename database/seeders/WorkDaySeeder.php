@@ -16,7 +16,7 @@ class WorkDaySeeder extends Seeder
         if ($employee) {
             // Crear días de trabajo para este empleado
             WorkDay::factory()
-                ->count(100)
+                ->count(rand(50, 100))
                 ->create([
                     'employee_id' => $employee->id,
                 ]);
