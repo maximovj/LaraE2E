@@ -33,7 +33,7 @@ class WorkActivityController extends Controller
             ]);
 
         return Inertia::render('WorkActivity/Index', [
-            'events' => $all_events->toArray(),
+            'events' => array_values($all_events->toArray()),
         ]);
     }
 
@@ -66,7 +66,9 @@ class WorkActivityController extends Controller
      */
     public function edit(WorkActivity $workActivity)
     {
-        dd($workActivity);
+        return Inertia::render('WorkActivity/Edit', [
+            'work_activity' => $workActivity->load(['work_day', 'work_event']),
+        ]);
     }
 
     /**
