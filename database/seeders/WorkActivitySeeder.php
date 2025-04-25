@@ -15,27 +15,28 @@ class WorkActivitySeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear actividades para el empleado específico (TK-0004)
-        $employee = Employee::where('employee_number', 'TK-0004')->first();
+       // Buscar al empleado específico (mejoramos con firstOrFail para error controlado)
+        $employee = Employee::where('employee_number', 'TK-0004')->firstOrFail();
 
-        if ($employee) {
-            // Obtener sus días de trabajo
-            $workDays = WorkDay::where('employee_id', $employee->id)->get();
+        // Obtener sus días de trabajo (con carga eficiente)
+        $workDays = WorkDay::where('employee_id', $employee->id)->get();
 
-            foreach ($workDays as $day) {
-                // Crear 2-5 actividades por día
-                WorkActivity::factory()
-                    ->count(1)
-                    ->create([
-                        'employee_id' => $employee->id,
-                        'work_day_id' => $day->id,
-                    ]);
-            }
+        foreach ($workDays as $day) {
+            // Crear exactamente 15 actividades por día
+            WorkActivity::factory()
+                ->count(rand(1, 15)) // Cantidad exacta
+                ->withRandomHours(1, 12) // Estado personalizado para horas
+                ->create([
+                    'employee_id' => $employee->id, // Asignación fija
+                    'work_day_id' => $day->id,     // Asignación por iteración
+                ]);
         }
 
+        /*
         // Crear actividades aleatorias para otros empleados (opcional)
         WorkActivity::factory()
             ->count(30)
             ->create();
+        */
     }
 }

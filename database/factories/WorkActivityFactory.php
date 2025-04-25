@@ -56,4 +56,23 @@ class WorkActivityFactory extends Factory
             ];
         });
     }
+
+    // Estado para horas aleatorias pero coherentes
+    public function withRandomHours(int $minHours = 1, int $maxHours = 8): Factory
+    {
+        return $this->state(function (array $attributes) use ($minHours, $maxHours) {
+            $start = fake()->time('H:i:s');
+            $end = \Carbon\Carbon::parse($start)
+                ->addHours(rand($minHours, $maxHours))
+                ->format('H:i:s');
+
+            return [
+                'start_time' => $start,
+                'end_time' => $end,
+                'duration_hours' => round(rand($minHours * 100, $maxHours * 100) / 100), // Ej: 3.5
+            ];
+        });
+    }
+
+
 }
