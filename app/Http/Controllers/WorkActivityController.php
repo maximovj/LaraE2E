@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WorkActivity;
 use App\Models\WorkDay;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class WorkActivityController extends Controller
@@ -43,6 +44,18 @@ class WorkActivityController extends Controller
     public function create()
     {
         //
+        $employee = auth()->user()->employee;
+
+        $work_days = WorkDay::query()
+        ->where('employee_id', $employee->id)
+        ->where('status', 'pending')
+        ->get(['id', DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as format_date")])
+        ->pluck('format_date')
+        ->toArray();
+
+        return Inertia::render('WorkActivity/Create', [
+            'work_days' => $work_days,
+        ]);
     }
 
     /**
