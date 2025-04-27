@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Casts\TimeCast;
+use App\Enums\WorkActivityStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -44,12 +46,18 @@ class WorkActivity extends Model
 
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [
-        'start_time' => 'datetime:H:i:s',
-        'end_time' => 'datetime:H:i:s',
+        'status' => WorkActivityStatus::class,
+        'start_time' => TimeCast::class,
+        'end_time' => TimeCast::class,
     ];
 
     // Especificamos que atributos deben ser ocultos
     protected $hidden = [];
+
+    public static function getStatusOptions(): array
+    {
+        return ['pending', 'approved', 'rejected', 'paid', 'unpaid'];
+    }
 
     // ******************************************************
     // >>>>>>>>>>>>>>>>>>>>>>>>>>>> RELACIONES

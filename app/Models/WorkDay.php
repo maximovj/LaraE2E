@@ -64,6 +64,11 @@ class WorkDay extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function activities()
+    {
+        return $this->hasMany(WorkActivity::class, 'work_day_id', 'id');
+    }
+
     public function events()
     {
         return $this->hasMany(WorkEvent::class, 'work_day_id', 'id');
