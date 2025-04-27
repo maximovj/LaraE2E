@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\TimeCast;
 use App\Enums\WorkActivityStatus;
+use App\Jobs\RecalculateWorkDay;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -76,6 +77,33 @@ class WorkActivity extends Model
     public function work_event()
     {
         return $this->hasOne(WorkEvent::class);
+    }
+
+    // ******************************************************
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>> BOOT
+    // ******************************************************
+
+    protected static function booted()
+    {
+        static::created(function ($workActivity) {
+            // Usar dispatchSync para ejecución inmediata
+            RecalculateWorkDay::dispatch($workActivity->work_day_id)
+                ->onQueue('low');
+        });
+
+        static::updated(function ($workActivity) {
+            if ($workActivity->isDirty('duration_hours')) {
+                // Usar dispatchSync para ejecución inmediata
+                RecalculateWorkDay::dispatch($workActivity->work_day_id)
+                    ->onQueue('low');
+            }
+        });
+
+        static::deleted(function ($workActivity) {
+            // Usar dispatchSync para ejecución inmediata
+            RecalculateWorkDay::dispatch($workActivity->work_day_id)
+                ->onQueue('low');
+        });
     }
 
 }
