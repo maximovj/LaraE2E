@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\WorkActivityStatus;
 
 return new class extends Migration
 {
@@ -33,14 +34,7 @@ return new class extends Migration
             $table->integer('duration_hours')->default(0); // Duración (puede calcularse automáticamente)
             $table->text('notes')->nullable(); // Notas adicionales
             $table->string('tags')->nullable(); // Etiquetas
-            $table->enum('status',
-            [
-                'pending', // Pendiente
-                'approved', // Aprobado
-                'rejected', // Rechazado
-                'paid', // Pagado
-                'unpaid' // No Pagado
-            ])->default('pending'); // estado
+            $table->enum('status', WorkActivityStatus::values())->default(WorkActivityStatus::PENDING->value);
 
             // Crear indices
             // Más rápido para: SELECT con WHERE, JOIN, ORDER BY
