@@ -70,8 +70,8 @@ const use_form_work_activity = useForm({
         editable: true,
         title: '',
         allDay: false,
-        start: new Date().getTime(),
-        end: new Date().getTime(),
+        start: new Date(),
+        end: new Date(),
         url: '',
         classnames: '',
         backgroundColor: '',
@@ -175,6 +175,13 @@ const getIcon = (status) => {
     }
 };
 
+// * Funciones HTTP's
+const submitCreateWorkActivity = () => {
+    use_form_work_activity.post(route('work-activities.store'), {
+
+    });
+}
+
 // * Computadas
 const durationHours = computed(() => {
   if (!use_form_work_activity.start_time || !use_form_work_activity.end_time) {
@@ -189,7 +196,10 @@ const durationHours = computed(() => {
   }
 
   const diffMs = end - start;
-  return diffMs / (1000 * 60 * 60); // Trunca decimales
+  const totalHours = diffMs / (1000 * 60 * 60);
+  use_form_work_activity.duration_hours = totalHours;
+
+  return totalHours; // Trunca decimales
 });
 
 // * Observadores
@@ -439,19 +449,19 @@ watch(
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
                                             <Textarea :disabled="!event_locked" :invalid="use_form_work_activity
-                                                    ?.errors?.work_day?.note
+                                                    ?.errors?.work_day?.details
                                                 " v-model="use_form_work_activity
-                                                        .work_day.note
-                                                    " size="small" id="work_day_note" aria-describedby="work_day_note-help"
+                                                        .work_day.details
+                                                    " size="small" id="work_day_details" aria-describedby="work_day_details-help"
                                                 fluid rows="5" cols="30" style="resize: none" />
-                                            <label for="work_day_note">Detalles</label>
+                                            <label for="work_day_details">Detalles</label>
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
-                                                ?.errors?.work_day?.note,
+                                                ?.errors?.work_day?.details,
                                         }" severity="error" variant="simple" size="small">{{
                                                 use_form_work_activity?.errors
-                                                    ?.work_day?.note
+                                                    ?.work_day?.details
                                             }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
@@ -496,10 +506,8 @@ watch(
                     </div>
 
                     <div v-if="use_form_work_activity.work_event.editable" class="flex justify-start mt-4 gap-2">
-                        <Button label="Modificar" severity="success" icon="pi pi-save" iconPos="left"
-                            @click="submitUserUpdate(2)" />
-                        <Button label="Eliminar" severity="danger" icon="pi pi-trash" iconPos="left"
-                            @click="submitUserUpdate(2)" />
+                        <Button label="Crear" severity="success" icon="pi pi-save" iconPos="left"
+                            @click="submitCreateWorkActivity()" />
                     </div>
                 </div>
             </div>
