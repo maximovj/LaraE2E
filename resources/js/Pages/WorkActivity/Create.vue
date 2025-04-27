@@ -38,6 +38,12 @@ const props = defineProps({
     }
 });
 
+const work_days_ref = ref([...props.work_days]);
+// Convertir a Date cuando sea necesario
+const formattedDates = work_days_ref.value.map(dateStr => new Date(dateStr));
+// Si necesitas ordenarlas (las Date son comparables)
+const sortedDates = formattedDates.sort((a, b) => a - b);
+
 const use_form_work_activity = useForm({
     title: ``,
     subtitle: ``,
@@ -82,7 +88,7 @@ const use_form_work_activity = useForm({
 // INICIO de lógica de programación
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 const toast = useToast();
-const pastDate = ref(subDays(new Date(), 32));
+const pastDate = ref(subDays(new Date(), 15));
 
 // Inicialización segura de tags
 const initialTags = () => {
@@ -168,6 +174,23 @@ const getIcon = (status) => {
             return "pi pi-clock"; // pending
     }
 };
+
+// * Computadas
+const durationHours = computed(() => {
+  if (!use_form_work_activity.start_time || !use_form_work_activity.end_time) {
+    return 0;
+  }
+
+  const start = new Date(use_form_work_activity.start_time);
+  const end = new Date(use_form_work_activity.end_time);
+
+  if (end < start) {
+    end.setDate(end.getDate() + 1);
+  }
+
+  const diffMs = end - start;
+  return diffMs / (1000 * 60 * 60); // Trunca decimales
+});
 
 // * Observadores
 // Sincroniza tags con el formulario (si es necesario)
@@ -340,6 +363,7 @@ watch(
                                             <DatePicker  inputId="over_work_day_date"
                                                 :min-date="pastDate"
                                                 :max-date="use_form_work_activity.work_day.date"
+                                                :disabled-dates="sortedDates"
                                                 inline showWeek class="w-full sm:w-[30rem]"
                                                 showIcon :default-value="new Date(
                                                     use_form_work_activity.work_day.date
@@ -348,7 +372,7 @@ watch(
                                                     min-width: 22rem;
                                                     max-width: 24px;
                                                 " />
-                                            <label for="over_work_day_date">Día de trabajo</label>
+                                            <label for="over_work_day_date">Día trabajo</label>
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
@@ -366,7 +390,7 @@ watch(
                                                     min-width: 22rem;
                                                     max-width: 24px;
                                                 " />
-                                            <label for="over_work_activity_start_time">Hora inicial</label>
+                                            <label for="over_work_activity_start_time">Hora inicial (formato 24 hrs)</label>
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
@@ -384,7 +408,7 @@ watch(
                                                     min-width: 22rem;
                                                     max-width: 24px;
                                                 " />
-                                            <label for="over_work_activity_end_time">Hora final</label>
+                                            <label for="over_work_activity_end_time">Hora final (formato 24 hrs)</label>
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
@@ -396,7 +420,7 @@ watch(
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <InputNumber :disabled="!event_locked" v-model="use_form_work_activity.duration_hours
+                                            <InputNumber :disabled="true" :invalid="false" v-model="durationHours
                                                 " inputId="minmax-buttons" mode="decimal" showButtons :min="0"
                                                 :max="100" fluid style="
                                                     min-width: 22rem;
@@ -448,7 +472,7 @@ watch(
                                                     ?.work_day?.note
                                             }}</Message>
                                     </div>
-                                    <div class="flex flex-col gap-2 field m-4">
+                                    <div v-if="false" class="flex flex-col gap-2 field m-4">
                                         <label for="over_work_day_billable">¿Es pagable el día?</label>
                                         <ToggleButton :disabled="!event_locked" v-model="use_form_work_activity.work_day
                                                 .billable
