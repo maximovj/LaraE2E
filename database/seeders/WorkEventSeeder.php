@@ -76,7 +76,7 @@ class WorkEventSeeder extends Seeder
             'pending' => '', // 'pending'
             '' => '', // 'pending'
         ];
-        return isset($status_available[$status]) ? $status_available[$status] : '';
+        return isset($status_available[$status->value]) ? $status_available[$status->value] : '';
     }
 
 
