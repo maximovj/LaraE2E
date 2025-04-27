@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\WorkActivity;
 use App\Models\WorkDay;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -46,11 +47,15 @@ class WorkActivityController extends Controller
         //
         $employee = auth()->user()->employee;
 
+        // Hace 15 días desde hoy
+        $startOfLast15Days = Carbon::now()->subDays(15);
+
         $work_days = WorkDay::query()
         ->where('employee_id', $employee->id)
         ->where('status', 'pending')
-        ->get(['id', DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as format_date")])
-        ->pluck('format_date')
+        ->where('date', '<', $startOfLast15Days) // Fechas anteriores a los últimos 15 días
+        ->get(['id', 'date'])
+        ->pluck('date')
         ->toArray();
 
         return Inertia::render('WorkActivity/Create', [
