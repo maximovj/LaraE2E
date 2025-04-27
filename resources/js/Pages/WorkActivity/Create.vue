@@ -3,6 +3,7 @@
 import { ref, computed, watch, defineProps } from 'vue';
 import { Head, usePage, router, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { formatDistance, subDays } from "date-fns";
 
 import {
     Avatar,
@@ -31,7 +32,10 @@ import { useConfirm } from "primevue/useconfirm";
 import { FilterMatchMode } from '@primevue/core/api';
 
 const props = defineProps({
-
+    work_days: {
+        type: Array,
+        default: () => [],
+    }
 });
 
 const use_form_work_activity = useForm({
@@ -78,6 +82,7 @@ const use_form_work_activity = useForm({
 // INICIO de lógica de programación
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 const toast = useToast();
+const pastDate = ref(subDays(new Date(), 32));
 
 // Inicialización segura de tags
 const initialTags = () => {
@@ -333,7 +338,8 @@ watch(
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
                                             <DatePicker  inputId="over_work_day_date"
-                                                :maxDate="use_form_work_activity.work_day.date"
+                                                :min-date="pastDate"
+                                                :max-date="use_form_work_activity.work_day.date"
                                                 inline showWeek class="w-full sm:w-[30rem]"
                                                 showIcon :default-value="new Date(
                                                     use_form_work_activity.work_day.date
