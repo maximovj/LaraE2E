@@ -211,6 +211,11 @@ return [
         'salary' => 'salary',
         'shift' => 'work shift',
         'emergency_contact' => 'emergency contact',
+
+        // WorkActivity
+        'title' => 'title',
+        'subtitle' => 'subtitle',
+        'description' => 'description',
     ],
 
 ];

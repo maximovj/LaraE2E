@@ -210,7 +210,9 @@ return [
         'status' => 'estado',
         'salary' => 'salario',
         'shift' => 'horario laboral',
-        'emergency_contact' => 'contacto de emergencia',
+        'title' => 'título',
+        'subtitle' => 'subtitulo',
+        'description' => 'descripción',
     ],
 
 
