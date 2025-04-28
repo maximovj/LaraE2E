@@ -48,8 +48,8 @@ class WorkActivity extends Model
     // Especificamos cómo los atributos deben ser casteados
     protected $casts = [
         'status' => WorkActivityStatus::class,
-        'start_time' => TimeCast::class,
-        'end_time' => TimeCast::class,
+        'start_time' => 'datetime:H:i:s',
+        'end_time' => 'datetime:H:i:s',
     ];
 
     // Especificamos que atributos deben ser ocultos
