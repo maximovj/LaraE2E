@@ -138,7 +138,11 @@ class WorkActivityController extends Controller
         $new_work_event->end = $end;
         $new_work_event->save();
 
-        dd($work_activity_attr, $new_work_day->fresh(), $new_work_activity, $new_work_event);
+        return redirect()
+        ->route('work-activities.index')
+        ->with('inertia_session', [
+            'success' => 'Actividad creado correctamente',
+        ]);
     }
 
     /**
@@ -173,5 +177,13 @@ class WorkActivityController extends Controller
     public function destroy(WorkActivity $workActivity)
     {
         //
+        //$workActivity->work_event->delete();
+        $workActivity->delete();
+
+        return redirect()
+        ->route('work-activities.index')
+        ->with('inertia_session', [
+            'success' => 'Actividad eliminado correctamente',
+        ]);
     }
 }
