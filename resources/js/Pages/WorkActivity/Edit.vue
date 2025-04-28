@@ -2,6 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { defineProps, ref, watch } from "vue";
+import { parse } from 'date-fns';
 
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
@@ -34,6 +35,47 @@ const props = defineProps({
     },
 });
 
+const user_form_work_activity = useForm({
+    title: `${props.work_activity.title}`,
+    subtitle: `${props.work_activity.subtitle}`,
+    description: `${props.work_activity.description ?? ''}`,
+    start_time: parse(props.work_activity.start_time, "HH:mm:ss", new Date(props.work_activity.work_event.start)),
+    end_time: parse(props.work_activity.end_time, "HH:mm:ss", new Date(props.work_activity.work_event.end)),
+    duration_hours: props.work_activity.duration_hours,
+    notes: `${props.work_activity.notes}`,
+    tags: props.work_activity.tags ?? [],
+    status: props.work_activity.status,
+    work_day: {
+        date: new Date(props.work_activity.work_day.date),
+        hourly_rate: props.work_activity.work_day.hourly_rate,
+        total_events: props.work_activity.work_day.total_events,
+        total_hours: props.work_activity.work_day.total_hours,
+        amount: props.work_activity.work_day.amount,
+        billable: props.work_activity.work_day.billable,
+        status: props.work_activity.work_day.status,
+        details: props.work_activity.work_day.details,
+        note: props.work_activity.work_day.note,
+        tags: props.work_activity.work_day.tags ?? [],
+    },
+    work_event: {
+        editable: props.work_activity.work_event.editable,
+        title: props.work_activity.work_event.title,
+        allDay: props.work_activity.work_event.allDay,
+        start: new Date(props.work_activity.work_event.start),
+        end: new Date(props.work_activity.work_event.end),
+        url: props.work_activity.work_event.url,
+        classnames: props.work_activity.work_event.classnames,
+        backgroundColor: props.work_activity.work_event.backgroundColor,
+        borderColor: props.work_activity.work_event.borderColor,
+        textColor: props.work_activity.work_event.textColor,
+        overlap: props.work_activity.work_event.overlap,
+        editable: props.work_activity.work_event.editable,
+        startEditable: props.work_activity.work_event.startEditable,
+        durationEditable: props.work_activity.work_event.durationEditable,
+        display: props.work_activity.work_event.display,
+    }
+});
+
 // Inicialización segura de tags
 const initialTags = () => {
     try {
@@ -45,7 +87,6 @@ const initialTags = () => {
     }
 };
 
-const user_form_work_activity = useForm({ ...props.work_activity });
 const tags = ref(initialTags());
 const newTag = ref("");
 const toast = useToast();
@@ -149,6 +190,16 @@ const confirmDelete = (event, user) => {
             toast.add({ severity: 'error', summary: 'Cancela', detail: 'Acción cancelada correctamente', life: 3000 });
         }
     });
+}
+
+const submitUpdateWorkActivity = () => {
+    user_form_work_activity
+    .transform((data) => ({
+        ...data,
+        start_time: user_form_work_activity.start_time.toLocaleString(),
+        end_time: user_form_work_activity.end_time.toLocaleString(),
+    }))
+    .patch(route('work-activities.update', props.work_activity.id));
 }
 
 // * Observadores
@@ -380,7 +431,7 @@ watch(
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <InputNumber :disabled="!event_locked" v-model="user_form_work_activity.duration_hours
+                                            <InputNumber :readonly="true" :disabled="true" v-model="user_form_work_activity.duration_hours
                                                 " inputId="minmax-buttons" mode="decimal" showButtons :min="0"
                                                 :max="100" fluid style="
                                                     min-width: 22rem;
@@ -390,15 +441,15 @@ watch(
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !user_form_work_activity
-                                                .errors?.subtitle,
+                                                .errors?.duration_hours,
                                         }" severity="error" variant="simple" size="small">{{
                                                 user_form_work_activity.errors
-                                                    ?.subtitle
+                                                    ?.duration_hours
                                             }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <Textarea :disabled="!event_locked" :invalid="user_form_work_activity
+                                            <Textarea :readonly="true" :disabled="true" :invalid="user_form_work_activity
                                                     .errors?.work_day?.note
                                                 " v-model="user_form_work_activity
                                                         .work_day.note
@@ -416,7 +467,7 @@ watch(
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <Textarea :disabled="!event_locked" :invalid="user_form_work_activity
+                                            <Textarea :readonly="true" :disabled="true" :invalid="user_form_work_activity
                                                     .errors?.work_day?.note
                                                 " v-model="user_form_work_activity
                                                         .work_day.note
@@ -434,7 +485,7 @@ watch(
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <label for="over_work_day_billable">¿Es pagable el día?</label>
-                                        <ToggleButton :disabled="!event_locked" v-model="user_form_work_activity.work_day
+                                        <ToggleButton :readonly="true" :disabled="true" v-model="user_form_work_activity.work_day
                                                 .billable
                                             " onIcon="pi pi-check" offIcon="pi pi-times"
                                             inputId="over_work_day_billable" size="large" class="w-full sm:w-40"
@@ -456,7 +507,7 @@ watch(
                     </div>
                     <div v-if="work_activity.work_event.editable" class="flex justify-start mt-4 gap-2">
                         <Button label="Modificar" severity="success" icon="pi pi-save" iconPos="left"
-                            @click="submitUserUpdate(2)" />
+                            @click="submitUpdateWorkActivity()" />
                         <Button label="Eliminar" severity="danger" icon="pi pi-trash" iconPos="left"
                             @click="confirmDelete($event)" />
                     </div>

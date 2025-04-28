@@ -426,10 +426,10 @@ watch(
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
-                                                ?.errors?.start_time,
+                                                ?.errors?.end_time,
                                         }" severity="error" variant="simple" size="small">{{
                                                 use_form_work_activity?.errors
-                                                    ?.start_time
+                                                    ?.end_time
                                             }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
