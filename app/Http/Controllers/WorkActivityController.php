@@ -171,6 +171,63 @@ class WorkActivityController extends Controller
     public function update(Request $request, WorkActivity $workActivity)
     {
         //
+        $work_activity_attr = $request->validate([
+            'title' => 'required|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'start_time' => 'required|date',
+            'end_time' => 'required|date',
+            'duration_hours' => 'required|numeric',
+            'notes' => 'required|string|max:255',
+            'status' => ['required',
+                new ValidStatus()
+                //new Enum(WorkActivityStatus::class)
+            ],
+            'work_day.details' => 'nullable|string',
+            'work_day.note' => 'nullable|string',
+        ]);
+
+        $employee = auth()->user()->employee;
+        $new_work_day = $workActivity->work_day;
+        $new_work_day_date = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('Y-m-d');
+
+        // !! Actualizar un WorkActivity (actividad del día)
+        $new_work_activity = $workActivity;
+        $new_work_activity->fill($work_activity_attr);
+        $new_work_activity->employee_id = $employee->id;
+        $new_work_activity->work_day_id = $new_work_day->id;
+        $new_work_activity->start_time = $new_work_activity_start_time = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('H:i:s');
+        $new_work_activity->end_time = $new_work_activity_end_time = Carbon::parse($work_activity_attr['end_time'])->tz('America/Mexico_City')->format('H:i:s');
+        $new_work_activity->save();
+
+        // !! Actualizar un WorkEvent (evento para FullCalendar.js)
+        $new_work_event = $workActivity->work_event;
+
+        $now = Carbon::now();
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', "{$new_work_day_date} {$new_work_activity_start_time}")->format('Y-m-d H:i:s');
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', "{$new_work_day_date} {$new_work_activity_end_time}")->format('Y-m-d H:i:s');
+        // Verifica si $end ya pasó Y si la diferencia es mayor o igual a 15 días
+        $endPassed_isEditable = ($now->diffInDays($end) >= 15) ? false : true;
+
+        $new_work_event->title = $new_work_activity->title;
+        $new_work_event->employee_id = $employee->id;
+        $new_work_event->work_day_id = $new_work_day->id;
+        $new_work_event->work_activity_id = $new_work_activity->id;
+        $new_work_event->backgroundColor = '';
+        $new_work_event->borderColor = '';
+        $new_work_event->overlap = $endPassed_isEditable;
+        $new_work_event->editable = $endPassed_isEditable;
+        $new_work_event->startEditable = $endPassed_isEditable;
+        $new_work_event->durationEditable = $endPassed_isEditable;
+        $new_work_event->start = $start;
+        $new_work_event->end = $end;
+        $new_work_event->save();
+
+        return redirect()
+        ->route('work-activities.index')
+        ->with('inertia_session', [
+            'success' => 'Actividad modificado correctamente',
+        ]);
     }
 
     /**
