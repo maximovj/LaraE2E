@@ -16,7 +16,8 @@ class TimeCast implements CastsAttributes
     public function get(Model $model, string $key, mixed $value, array $attributes): mixed
     {
         // get para devolver un objeto Carbon
-        return $value ? \Carbon\Carbon::createFromFormat('H:i:s', $value) : null;
+        //return $value;
+        return $value ? \Carbon\Carbon::createFromFormat('H:i:s', $value)->format('H:i') : null;
     }
 
     /**
