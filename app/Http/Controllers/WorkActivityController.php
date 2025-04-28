@@ -90,7 +90,7 @@ class WorkActivityController extends Controller
         ]);
 
         $employee = auth()->user()->employee;
-        $new_work_day_date = Carbon::parse($work_activity_attr['start_time'])->format('Y-m-d');
+        $new_work_day_date = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('Y-m-d');
 
         // !! Crear un nuevo WorkDay (día trabajado)
         // Crear o actualizar WorkDay
@@ -111,8 +111,8 @@ class WorkActivityController extends Controller
         $new_work_activity->fill($work_activity_attr);
         $new_work_activity->employee_id = $employee->id;
         $new_work_activity->work_day_id = $new_work_day->id;
-        $new_work_activity->start_time = $new_work_activity_start_time = Carbon::parse($work_activity_attr['start_time'])->format('H:i:s');
-        $new_work_activity->end_time = $new_work_activity_end_time = Carbon::parse($work_activity_attr['end_time'])->format('H:i:s');
+        $new_work_activity->start_time = $new_work_activity_start_time = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('H:i:s');
+        $new_work_activity->end_time = $new_work_activity_end_time = Carbon::parse($work_activity_attr['end_time'])->tz('America/Mexico_City')->format('H:i:s');
         $new_work_activity->save();
 
         // !! Crear un nuevo WorkEvent (evento para FullCalendar.js)
@@ -137,6 +137,8 @@ class WorkActivityController extends Controller
         $new_work_event->start = $start;
         $new_work_event->end = $end;
         $new_work_event->save();
+
+        dd($request->all(), $new_work_day, $new_work_activity, $new_work_event);
 
         return redirect()
         ->route('work-activities.index')

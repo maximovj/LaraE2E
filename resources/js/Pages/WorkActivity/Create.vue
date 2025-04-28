@@ -177,7 +177,13 @@ const getIcon = (status) => {
 
 // * Funciones HTTP's
 const submitCreateWorkActivity = () => {
-    use_form_work_activity.post(route('work-activities.store'));
+    use_form_work_activity
+    .transform((data) => ({
+        ...data,
+        start_time: use_form_work_activity.start_time.toLocaleString(),
+        end_time: use_form_work_activity.end_time.toLocaleString(),
+    }))
+    .post(route('work-activities.store'));
 }
 
 // * Computadas
