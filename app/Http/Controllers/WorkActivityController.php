@@ -138,7 +138,7 @@ class WorkActivityController extends Controller
         $new_work_event->end = $end;
         $new_work_event->save();
 
-        dd($request->all(), $new_work_day, $new_work_activity, $new_work_event);
+        //dd($request->all(), $new_work_day, $new_work_activity, $new_work_event);
 
         return redirect()
         ->route('work-activities.index')

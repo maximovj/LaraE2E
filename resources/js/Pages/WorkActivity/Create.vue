@@ -444,17 +444,15 @@ watch(
                                         </FloatLabel>
                                         <Message :class="{
                                             hidden: !use_form_work_activity
-                                                ?.errors?.subtitle,
+                                                ?.errors?.duration_hours,
                                         }" severity="error" variant="simple" size="small">{{
                                                 use_form_work_activity?.errors
-                                                    ?.subtitle
+                                                    ?.duration_hours
                                             }}</Message>
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <Textarea :disabled="!event_locked" :invalid="use_form_work_activity
-                                                    ?.errors?.work_day?.details
-                                                " v-model="use_form_work_activity
+                                            <Textarea :disabled="true" :invalid="false" v-model="use_form_work_activity
                                                         .work_day.details
                                                     " size="small" id="work_day_details" aria-describedby="work_day_details-help"
                                                 fluid rows="5" cols="30" style="resize: none" />
@@ -470,9 +468,7 @@ watch(
                                     </div>
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <Textarea :disabled="!event_locked" :invalid="use_form_work_activity
-                                                    ?.errors?.work_day?.note
-                                                " v-model="use_form_work_activity
+                                            <Textarea :disabled="true" :invalid="false" v-model="use_form_work_activity
                                                         .work_day.note
                                                     " size="small" id="work_day_note" aria-describedby="work_day_note-help"
                                                 fluid rows="5" cols="30" style="resize: none" />
