@@ -76,12 +76,12 @@ class WorkActivityController extends Controller
     {
         $work_activity_attr = $request->validate([
             'title' => 'required|string|max:255',
-            'subtitle' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'subtitle' => 'sometimes|nullable|string|max:255',
+            'description' => 'sometimes|nullable|string|max:255',
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'duration_hours' => 'required|numeric',
-            'notes' => 'required|string|max:255',
+            'notes' => 'sometimes|nullable|string',
             'status' => ['required',
                 new ValidStatus()
                 //new Enum(WorkActivityStatus::class)
@@ -174,12 +174,12 @@ class WorkActivityController extends Controller
         //
         $work_activity_attr = $request->validate([
             'title' => 'required|string|max:255',
-            'subtitle' => 'required|string|max:255',
-            'description' => 'required|string|max:255',
+            'subtitle' => 'sometimes|nullable|string|max:255',
+            'description' => 'sometimes|nullable|string|max:255',
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'duration_hours' => 'required|numeric',
-            'notes' => 'required|string|max:255',
+            'notes' => 'sometimes|nullable|string',
             'status' => ['required',
                 new ValidStatus()
                 //new Enum(WorkActivityStatus::class)
