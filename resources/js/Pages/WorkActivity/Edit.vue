@@ -3,6 +3,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { defineProps, ref, watch } from "vue";
 
+import Toast from 'primevue/toast';
+import { useToast } from 'primevue/usetoast';
+
+import ConfirmPopup from 'primevue/confirmpopup';
+import { useConfirm } from "primevue/useconfirm";
+
+import { FilterMatchMode } from '@primevue/core/api';
+
 import {
     Avatar,
     FloatLabel,
@@ -40,6 +48,8 @@ const initialTags = () => {
 const user_form_work_activity = useForm({ ...props.work_activity });
 const tags = ref(initialTags());
 const newTag = ref("");
+const toast = useToast();
+const confirm = useConfirm();
 
 const work_activity_status = ref(props.work_activity.status);
 const work_activity_options = ref([
@@ -112,6 +122,35 @@ const getIcon = (status) => {
     }
 };
 
+// * Funciones HTTP's
+const confirmDelete = (event, user) => {
+    confirm.require({
+        target: event.currentTarget,
+        message: 'Are you sure you want to proceed?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectProps: {
+            label: 'Cancelar',
+            severity: 'secondary',
+            outlined: true
+        },
+        acceptProps: {
+            label: 'Eliminar',
+            severity: 'danger'
+        },
+        accept: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Confirmado',
+                detail: 'Acción aceptada correctamente', life: 3000
+            });
+            router.delete(route('work-activities.destroy', props.work_activity.id));
+        },
+        reject: () => {
+            toast.add({ severity: 'error', summary: 'Cancela', detail: 'Acción cancelada correctamente', life: 3000 });
+        }
+    });
+}
+
 // * Observadores
 // Sincroniza tags con el formulario (si es necesario)
 watch(
@@ -143,6 +182,8 @@ watch(
 </script>
 
 <template>
+    <Toast />
+    <ConfirmPopup></ConfirmPopup>
 
     <Head title="Modificar actividad" />
 
@@ -417,7 +458,7 @@ watch(
                         <Button label="Modificar" severity="success" icon="pi pi-save" iconPos="left"
                             @click="submitUserUpdate(2)" />
                         <Button label="Eliminar" severity="danger" icon="pi pi-trash" iconPos="left"
-                            @click="submitUserUpdate(2)" />
+                            @click="confirmDelete($event)" />
                     </div>
                 </div>
             </div>
