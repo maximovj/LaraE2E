@@ -187,7 +187,12 @@ const confirmDelete = (event, user) => {
             router.delete(route('work-activities.destroy', props.work_activity.id));
         },
         reject: () => {
-            toast.add({ severity: 'error', summary: 'Cancela', detail: 'Acción cancelada correctamente', life: 3000 });
+            toast.add({
+                severity: 'error',
+                summary: 'Cancela',
+                detail: 'Acción cancelada correctamente',
+                life: 3000
+            });
         }
     });
 }
@@ -199,7 +204,16 @@ const submitUpdateWorkActivity = () => {
         start_time: user_form_work_activity.start_time.toLocaleString(),
         end_time: user_form_work_activity.end_time.toLocaleString(),
     }))
-    .patch(route('work-activities.update', props.work_activity.id));
+    .patch(route('work-activities.update', props.work_activity.id),{
+        onError(){
+            toast.add({
+                severity: 'error',
+                summary: 'Modificar actividad',
+                detail: 'Actividad no modificado, hubo un error en el proceso',
+                life: 3000
+            });
+        }
+    });
 }
 
 // * Observadores
