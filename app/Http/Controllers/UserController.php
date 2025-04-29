@@ -39,11 +39,26 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'roles' => [
+                'sometimes',
+                'array',
+                'size:1', // Asegura que solo venga 1 rol
+            ],
+            'roles.*.name' => [ // Valida el campo 'name' dentro de cada objeto del array
+                'required',
+                'string',
+                Rule::exists(Role::class, 'name'), // Verifica que el rol exista
+            ],
         ]);
 
         $new_user = new User();
         $new_user->fill($user_attr);
         $new_user->save();
+
+        if ($request->has('roles')) {
+            $roleName = $request->input('roles.0.name');
+            $new_user->syncRoles([$roleName]); // Asigna solo ese rol (elimina los anteriores)
+        }
 
         return redirect(null, 200)
             ->back()
