@@ -2,7 +2,7 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { defineProps, ref, watch } from "vue";
-import { parse } from 'date-fns';
+import { parse, parseISO } from 'date-fns';
 
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
@@ -46,7 +46,7 @@ const user_form_work_activity = useForm({
     tags: props.work_activity.tags ?? [],
     status: props.work_activity.status,
     work_day: {
-        date: new Date(props.work_activity.work_day.date),
+        date: new Date(props.work_activity.work_day.date.replace('Z', '')),
         hourly_rate: props.work_activity.work_day.hourly_rate,
         total_events: props.work_activity.work_day.total_events,
         total_hours: props.work_activity.work_day.total_hours,
@@ -389,11 +389,10 @@ watch(
                                 <div class="flex flex-col gap-2 mt-4" style="min-height: 100%; max-width: 100%">
                                     <div class="flex flex-col gap-2 field m-4">
                                         <FloatLabel>
-                                            <DatePicker :readonly="true" :disabled="true" inputId="over_work_day_date"
-                                                showIcon :default-value="new Date(
-                                                    user_form_work_activity.work_day.date
-                                                )
-                                                    " iconDisplay="input" style="
+                                            <DatePicker :readonly="true" :disabled="true"
+                                                v-model="user_form_work_activity.work_day.date"
+                                                inputId="over_work_day_date"
+                                                showIcon iconDisplay="input" style="
                                                     min-width: 22rem;
                                                     max-width: 24px;
                                                 " />
