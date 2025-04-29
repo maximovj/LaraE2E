@@ -28,8 +28,8 @@ class UserSeeder extends Seeder
 
     protected function createBasePermissions(): void
     {
-        $models = ['users', 'companies', 'employees', 'offices', 'user_profiles'];
-        $actions = ['create', 'read', 'update', 'delete', 'destroy', 'manage']; // 'manage' para acciones especiales
+        $models = ['users', 'companies', 'employees', 'offices', 'user_profiles', 'work_activities'];
+        $actions = ['create', 'read', 'update', 'delete', 'destroy', 'restore', 'manage']; // 'manage' para acciones especiales
 
         foreach ($models as $model) {
             foreach ($actions as $action) {
@@ -80,6 +80,11 @@ class UserSeeder extends Seeder
         // Usuario Regular
         $regularUser = Role::firstOrCreate(['name' => 'regular-user']);
         $regularUser->givePermissionTo([
+            'work_activities.create',
+            'work_activities.read',
+            'work_activities.update',
+            'work_activities.delete',
+            'work_activities.destroy',
             'user_profiles.read',
             'user_profiles.update'
         ]);
