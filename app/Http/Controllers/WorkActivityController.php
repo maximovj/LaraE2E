@@ -17,11 +17,13 @@ use Inertia\Inertia;
 
 class WorkActivityController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', WorkActivity::class);
         /*
         $employee = auth()->user()->load('employee')->employee;
         $work_days = WorkDay::query()->where('employee_id', $employee->id)->with('events')->get();
@@ -51,6 +53,7 @@ class WorkActivityController extends Controller
     public function create()
     {
         //
+        $this->authorize('create', WorkActivity::class);
         $employee = auth()->user()->employee;
 
         // Hace 15 días desde hoy
@@ -74,6 +77,7 @@ class WorkActivityController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', WorkActivity::class);
         $work_activity_attr = $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'sometimes|nullable|string|max:255',
@@ -154,6 +158,7 @@ class WorkActivityController extends Controller
     public function show(WorkActivity $workActivity)
     {
         //
+        $this->authorize('view', $workActivity);
     }
 
     /**
@@ -161,6 +166,8 @@ class WorkActivityController extends Controller
      */
     public function edit(WorkActivity $workActivity)
     {
+        //
+        $this->authorize('update', $workActivity);
         return Inertia::render('WorkActivity/Edit', [
             'work_activity' => $workActivity->load(['work_day', 'work_event']),
         ]);
@@ -172,6 +179,7 @@ class WorkActivityController extends Controller
     public function update(Request $request, WorkActivity $workActivity)
     {
         //
+        $this->authorize('update', $workActivity);
         $work_activity_attr = $request->validate([
             'title' => 'required|string|max:255',
             'subtitle' => 'sometimes|nullable|string|max:255',
@@ -246,6 +254,7 @@ class WorkActivityController extends Controller
     public function destroy(WorkActivity $workActivity)
     {
         //
+        $this->authorize('delete', $workActivity);
         //$workActivity->work_event->delete();
         $workActivity->delete();
 
