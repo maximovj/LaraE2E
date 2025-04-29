@@ -126,6 +126,7 @@ const submitUserCreate = (nextStep) => {
     user_form
     .transform((data) => ({
         ...data,
+        roles: selectedRoles.value,
         active_step: activeStep.value, // value = 1
     }))
     .post(route('users.store'), {

@@ -70,9 +70,10 @@ const submitUserCreate = (nextStep) => {
     user_form
     .transform((data) => ({
         ...data,
+        roles: selectedRoles.value,
         active_step: activeStep.value, // value = 1
     }))
-    .post(route(props.action), {
+    .post(route('users.store'), {
         headers: {
             'X-Inertia' : true,
         },
@@ -101,12 +102,6 @@ const submitUserCreate = (nextStep) => {
     });
 }
 
-const submitEmployeeUpdate = (nextStep, new_user) => {
-    router.put(route('employees.update', props.employee), {
-        user: userRef.value,
-    });
-}
-
 const submitUserUpdate = (nextStep) => {
     user_form
     .transform((data) => ({
@@ -114,7 +109,7 @@ const submitUserUpdate = (nextStep) => {
         roles: selectedRoles.value,
         active_step: activeStep.value, // value = 1
     }))
-    .patch(route(props.action, props.user), {
+    .patch(route('users.update', props.user), {
         headers: {
             'X-Inertia' : true,
         },
@@ -141,6 +136,12 @@ const submitUserUpdate = (nextStep) => {
                 detail: 'Hay errores en los campos',
             });
         }
+    });
+}
+
+const submitEmployeeUpdate = (nextStep, new_user) => {
+    router.put(route('employees.update', props.employee), {
+        user: userRef.value,
     });
 }
 
