@@ -259,4 +259,21 @@ class WorkActivityController extends Controller
             'success' => 'Actividad eliminado correctamente',
         ]);
     }
+
+    /**
+     * Show the form for import resources from Excel.
+     */
+    public function import_activities()
+    {
+        return Inertia::render('WorkActivity/ImportActivities');
+    }
+
+    /**
+     * Import resources from Excel
+     */
+    public function import(Request $request)
+    {
+        dd($request->all());
+    }
+
 }
