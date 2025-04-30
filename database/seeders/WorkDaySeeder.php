@@ -10,10 +10,11 @@ class WorkDaySeeder extends Seeder
 {
     public function run(): void
     {
-        // Obtener el empleado específico
-        $employee = Employee::where('employee_number', 'TK-0004')->first();
+        $employees = Employee::whereHas('user', function($query){
+            $query->role('regular-user');
+        })->get();
 
-        if ($employee) {
+        foreach($employees as $employee) {
             // Crear días de trabajo para este empleado
             WorkDay::factory()
                 ->count(rand(50, 100))

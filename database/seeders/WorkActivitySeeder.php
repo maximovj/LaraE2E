@@ -15,21 +15,28 @@ class WorkActivitySeeder extends Seeder
      */
     public function run(): void
     {
-       // Buscar al empleado específico (mejoramos con firstOrFail para error controlado)
-        $employee = Employee::where('employee_number', 'TK-0004')->firstOrFail();
 
-        // Obtener sus días de trabajo (con carga eficiente)
-        $workDays = WorkDay::where('employee_id', $employee->id)->get();
+        $employees = Employee::whereHas('user', function($query){
+            $query->role('regular-user');
+        })->get();
 
-        foreach ($workDays as $day) {
-            // Crear exactamente 15 actividades por día
-            WorkActivity::factory()
-                ->count(rand(1, 15)) // Cantidad exacta
-                ->withRandomHours(1, 12) // Estado personalizado para horas
-                ->create([
-                    'employee_id' => $employee->id, // Asignación fija
-                    'work_day_id' => $day->id,     // Asignación por iteración
-                ]);
+        foreach($employees as $employee) {
+            // Buscar al empleado específico (mejoramos con firstOrFail para error controlado)
+            //$employee = Employee::where('employee_number', 'TK-0004')->firstOrFail();
+
+            // Obtener sus días de trabajo (con carga eficiente)
+            $workDays = WorkDay::where('employee_id', $employee->id)->get();
+
+            foreach ($workDays as $day) {
+                // Crear exactamente 15 actividades por día
+                WorkActivity::factory()
+                    ->count(rand(1, 15)) // Cantidad exacta
+                    ->withRandomHours(1, 12) // Estado personalizado para horas
+                    ->create([
+                        'employee_id' => $employee->id, // Asignación fija
+                        'work_day_id' => $day->id,     // Asignación por iteración
+                    ]);
+            }
         }
 
         /*
