@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\WorkActivityController;
+use App\Models\WorkActivity;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +41,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('work-activities/import-activities', [WorkActivityController::class, 'import_activities'])
+    ->middleware(['auth', 'verified', 'role:regular-user'])->name('work-activities.import_activities');
 
 Route::resource('work-activities', WorkActivityController::class)
     ->middleware(['auth', 'verified', 'role:regular-user']);
