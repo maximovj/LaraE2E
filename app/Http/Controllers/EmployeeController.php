@@ -95,11 +95,11 @@ class EmployeeController extends Controller
         $employee->office_id = $authUserWithOffice->office->id;
 
         // Verificar si existe el usuario
-        if($user_id = $request->has('user.id')) {
+        if($request->has('user.id')) {
             $request->validate([
-                'user.id' => ['required', Rule::exists(User::class), Rule::unique(Employee::class, 'user_id')],
+                'user.id' => ['required', Rule::exists(User::class, 'id'), Rule::unique(Employee::class, 'user_id')],
             ]);
-            $employee->user_id = $user_id;
+            $employee->user_id = intval($request->input('user.id'));
         }
 
         $employee->save();

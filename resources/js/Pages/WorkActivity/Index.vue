@@ -38,6 +38,7 @@ const canDelete = computed(() => getCurrentPermissions().includes('employees.del
 const canUpdate = computed(() => getCurrentPermissions().includes('employees.update'));
 const canRead = computed(() => getCurrentPermissions().includes('employees.read'));
 
+const calendarRef = ref(null);
 const calendarOptions = ref({
     schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
     locale: 'es',
@@ -77,6 +78,24 @@ const calendarOptions = ref({
     events: [
         ...props.events
     ],
+    dateClick: function(info) {
+        alert('Clicked on: ' + info.dateStr);
+        alert('Coordinates: ' + info.jsEvent.pageX + ',' + info.jsEvent.pageY);
+        alert('Current view: ' + info.view.type);
+        // change the day's background color just for fun
+        info.dayEl.style.backgroundColor = 'red';
+    },
+    navLinkDayClick(date, jsEvent) {
+        // 1. Ejecuta tu lógica personalizada
+        console.log('day', date.toISOString());
+        console.log('coords', jsEvent.pageX, jsEvent.pageY);
+
+        // 2. Navega manualmente a la vista de día
+        // ✅ Accede a la API a través de la referencia
+        if (calendarRef.value) {
+            calendarRef.value.getApi().changeView('timeGridDay', date);
+        }
+    },
     eventDrop(info) {
         console.log(info);
         // Obtener las fechas original y nueva
@@ -201,7 +220,7 @@ const calendarOptions = ref({
                             Crear actividad
                         </Button>
                     </div>
-                    <FullCalendar :options='calendarOptions'></FullCalendar>
+                    <FullCalendar ref="calendarRef" :options='calendarOptions'></FullCalendar>
                 </div>
             </div>
         </div>

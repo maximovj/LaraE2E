@@ -376,13 +376,11 @@ watch(
                                         <FloatLabel>
                                             <DatePicker  inputId="over_work_day_date"
                                                 :min-date="pastDate"
-                                                :max-date="use_form_work_activity.work_day.date"
+                                                :max-date="new Date()"
                                                 :disabled-dates="sortedDates"
+                                                v-model="use_form_work_activity.work_day.date"
                                                 inline showWeek class="w-full sm:w-[30rem]"
-                                                showIcon :default-value="new Date(
-                                                    use_form_work_activity.work_day.date
-                                                )
-                                                    " iconDisplay="input" style="
+                                                showIcon iconDisplay="input" style="
                                                     min-width: 22rem;
                                                     max-width: 24px;
                                                 " />

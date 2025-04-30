@@ -20,7 +20,7 @@ return new class extends Migration
             ->cascadeOnDelete()
             ->cascadeOnUpdate();
 
-            $table->date('date')->unique(); // Fecha del día
+            $table->date('date'); // Fecha del día
             $table->decimal('hourly_rate', 10, 2)->default(0.0);
             $table->integer('total_events')->default(0); // Total de eventos
             $table->decimal('total_hours', 8, 2)->default(0.0); // Total de horas
@@ -37,6 +37,9 @@ return new class extends Migration
             $table->text('details')->nullable(); // detalles
             $table->text('note')->nullable(); // notas
             $table->string('tags')->nullable();
+
+            // Índice único compuesto (combinación única de ambos campos)
+            $table->unique(['employee_id', 'date']);
 
             // Crear indices
             // Más rápido para: SELECT con WHERE, JOIN, ORDER BY

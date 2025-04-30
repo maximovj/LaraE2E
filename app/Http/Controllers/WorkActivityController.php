@@ -92,10 +92,11 @@ class WorkActivityController extends Controller
             ],
             'work_day.details' => 'nullable|string',
             'work_day.note' => 'nullable|string',
+            'work_day.date' => 'required|date',
         ]);
 
         $employee = auth()->user()->employee;
-        $new_work_day_date = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('Y-m-d');
+        $new_work_day_date = Carbon::parse($work_activity_attr['work_day']['date'])->tz('America/Mexico_City')->format('Y-m-d');
 
         // !! Crear un nuevo WorkDay (día trabajado)
         // Crear o actualizar WorkDay
@@ -166,8 +167,7 @@ class WorkActivityController extends Controller
      */
     public function edit(WorkActivity $workActivity)
     {
-        //
-        $this->authorize('update', $workActivity);
+        //dd($workActivity->load(['work_day', 'work_event']));
         return Inertia::render('WorkActivity/Edit', [
             'work_activity' => $workActivity->load(['work_day', 'work_event']),
         ]);
@@ -182,8 +182,9 @@ class WorkActivityController extends Controller
         $this->authorize('update', $workActivity);
         $work_activity_attr = $request->validate([
             'title' => 'required|string|max:255',
-            'subtitle' => 'sometimes|nullable|string|max:255',
-            'description' => 'sometimes|nullable|string|max:255',
+            'subtitle' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'duration_hours' => 'required|numeric',
@@ -194,13 +195,14 @@ class WorkActivityController extends Controller
             ],
             'work_day.details' => 'nullable|string',
             'work_day.note' => 'nullable|string',
+            'work_day.date' => 'required|date',
         ]);
 
         try {
             DB::transaction(function () use ($workActivity, $work_activity_attr) {
                 $employee = auth()->user()->employee;
                 $new_work_day = $workActivity->work_day;
-                $new_work_day_date = Carbon::parse($work_activity_attr['start_time'])->tz('America/Mexico_City')->format('Y-m-d');
+                $new_work_day_date = Carbon::parse($work_activity_attr['work_day']['date'])->tz('America/Mexico_City')->format('Y-m-d');
 
                 // !! Actualizar un WorkActivity (actividad del día)
                 $new_work_activity = $workActivity;
@@ -264,4 +266,21 @@ class WorkActivityController extends Controller
             'success' => 'Actividad eliminado correctamente',
         ]);
     }
+
+    /**
+     * Show the form for import resources from Excel.
+     */
+    public function import_activities()
+    {
+        return Inertia::render('WorkActivity/ImportActivities');
+    }
+
+    /**
+     * Import resources from Excel
+     */
+    public function import(Request $request)
+    {
+        dd($request->all());
+    }
+
 }
