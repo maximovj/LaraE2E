@@ -280,7 +280,29 @@ class WorkActivityController extends Controller
      */
     public function import(Request $request)
     {
-        dd($request->all());
+        $request->validate([
+            'excelFile' => 'required|file|mimes:xlsx,xls|max:1024',
+        ]);
+
+        try {
+            $file = $request->file('excelFile');
+            $path = $file->store('uploads/excel');
+            return back()->with('inertia_session', [
+                'ctx_title' => 'Actividad de trabajo',
+                'ctx_message' => 'Empleado modificado correctamente',
+                'type' => 'success',
+                'data' => [
+                    'path' => $path,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('inertia_session', [
+                'ctx_title' => 'Actividad de trabajo',
+                'ctx_message' => 'Error al subir el archivo',
+                'type' => 'error',
+                'data' => []
+            ]);
+        }
     }
 
 }
