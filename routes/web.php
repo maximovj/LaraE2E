@@ -42,6 +42,9 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::post('/upload', [WorkActivityController::class, 'import'])
+    ->middleware(['auth', 'verified', 'role:regular-user'])->name('work-activities.import');
+
 Route::get('work-activities/import-activities', [WorkActivityController::class, 'import_activities'])
     ->middleware(['auth', 'verified', 'role:regular-user'])->name('work-activities.import_activities');
 

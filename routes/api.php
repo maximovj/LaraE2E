@@ -19,5 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/upload', [WorkActivityController::class, 'import'])
-    ->middleware(['auth', 'verified', 'role:regular-user'])->name('work-activities.import');
+
