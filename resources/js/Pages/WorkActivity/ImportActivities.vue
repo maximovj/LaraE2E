@@ -25,9 +25,21 @@ import { useConfirm } from "primevue/useconfirm";
 // * Variables
 const file = ref(null);
 const isUploading = ref(false);
+const isUploaded = ref(false);
+const fileUploadRef = ref(); // Referencia al componente FileUpload
 
 const onSelect = (event) => {
-    file.value = event.files[0]; // Guarda el archivo seleccionado
+    file.value = event.files[0]; // Asigna solo el nuevo archivo
+    console.log(event, fileUploadRef.value);
+};
+
+const removeFile = (file, removeFileCallback) => {
+    removeFileCallback(); // Elimina el archivo de la vista previa (PrimeVue)
+    file.value = null;   // Limpia la referencia
+};
+
+const clearFile = () => {
+    file.value = null;
 };
 
 const uploadFile = async () => {
@@ -43,9 +55,11 @@ const uploadFile = async () => {
             preserveScroll: true,
             onSuccess: (res) => {
                 console.log('Se subió correctamente:', res);
+                isUploaded.value = true;
             },
             onError: (res) => {
                 console.log('Hubo un error:', res);
+                isUploaded.value = false;
             },
             onFinish: () => {
                 isUploading.value = false;
@@ -87,8 +101,8 @@ const formatSize = (bytes) => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <FileUpload name="excelFile" @select="onSelect" accept=".xlsx,.xls" :maxFileSize="1_000_000"
-                        :multiple="false" :auto="false" :customUpload="true">
+                    <FileUpload ref="fileUploadRef" name="excelFile" @select="onSelect" accept=".xlsx,.xls" :maxFileSize="1_000_000"
+                        :multiple="false" :auto="false" :customUpload="true" :fileLimit="1">
                         <template #header="{ chooseCallback }">
                             <div class="flex gap-2">
                                 <Button @click="chooseCallback()" icon="pi pi-file-excel" label="Seleccionar archivo"
@@ -105,13 +119,21 @@ const formatSize = (bytes) => {
                             </div>
                         </template>
 
-                        <template #content="{ files }">
+                        <template #content="{ files, removeFileCallback }">
                             <div v-if="files.length > 0" class="mt-4 p-3 border rounded">
-                                <div class="flex items-center gap-3">
-                                    <i class="pi pi-file-excel text-4xl text-green-500" />
-                                    <div>
-                                        <p class="font-medium">{{ files[0].name }}</p>
-                                        <p class="text-sm text-gray-500">{{ formatSize(files[0].size) }}</p>
+                                <div class="flex items-center justify-between gap-3">
+                                    <div class="flex items-center gap-3">
+                                        <i class="pi pi-file-excel text-4xl text-green-500" />
+                                        <div>
+                                            <p class="font-medium">{{ files[0].name }}</p>
+                                            <p class="text-sm text-gray-500">{{ formatSize(files[0].size) }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <Badge v-if="!isUploaded" value="Pendiente" severity="warn" />
+                                        <Badge v-else value="Completado" severity="success" />
+                                        <Button @click="removeFile(files[0], removeFileCallback)" icon="pi pi-times"
+                                            outlined rounded severity="danger" title="Eliminar archivo" />
                                     </div>
                                 </div>
                             </div>
