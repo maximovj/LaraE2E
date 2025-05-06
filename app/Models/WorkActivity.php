@@ -50,6 +50,7 @@ class WorkActivity extends Model
         'status' => WorkActivityStatus::class,
         'start_time' => 'datetime:H:i:s',
         'end_time' => 'datetime:H:i:s',
+        'tags' => 'array',
     ];
 
     // Especificamos que atributos deben ser ocultos
