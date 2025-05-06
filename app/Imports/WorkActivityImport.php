@@ -129,7 +129,7 @@ class WorkActivityImport implements ToCollection, WithHeadingRow, SkipsEmptyRows
                             $new_work_activity->title = $data['titulo'];
                             $new_work_activity->subtitle = $data['subtitulo'];
                             $new_work_activity->description = $data['descripcion'];
-                            $new_work_activity->tags = $data['etiquetas'];
+                            $new_work_activity->tags = array_filter(array_map('trim', explode(',', $data['etiquetas'])));
                             $new_work_activity->employee_id = $employee->id;
                             $new_work_activity->work_day_id = $new_work_day->id;
                             $new_work_activity->start_time = $new_work_activity_start_time = Carbon::parse($data['inicio'])->tz('America/Mexico_City')->format('H:i:s');
