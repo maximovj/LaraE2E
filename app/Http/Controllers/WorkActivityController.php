@@ -16,6 +16,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class WorkActivityController extends Controller
 {
@@ -84,6 +85,7 @@ class WorkActivityController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'sometimes|nullable|string|max:255',
             'description' => 'sometimes|nullable|string|max:255',
+            'tags' => 'sometimes|nullable|array|max:5',
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'duration_hours' => 'required|numeric',
@@ -186,7 +188,7 @@ class WorkActivityController extends Controller
             'title' => 'required|string|max:255',
             'subtitle' => 'required|string|max:255',
             'description' => 'required|string|max:255',
-
+            'tags' => 'sometimes|nullable|array|max:5',
             'start_time' => 'required|date',
             'end_time' => 'required|date',
             'duration_hours' => 'required|numeric',
