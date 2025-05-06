@@ -23,6 +23,7 @@ import { useConfirm } from "primevue/useconfirm";
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 // * Variables
+const toast = useToast();
 const file = ref(null);
 const isUploading = ref(false);
 const isUploaded = ref(false);
@@ -54,8 +55,17 @@ const uploadFile = async () => {
         router.post('/upload', formData, {
             preserveScroll: true,
             onSuccess: (res) => {
-                console.log('Se subió correctamente:', res);
                 isUploaded.value = true;
+                clearFile();
+                fileUploadRef.value.files = [];
+                fileUploadRef.value.clear();
+                router.visit(route('work-activities.index'));
+
+                toast.add({
+                    summary: 'Importar actividades',
+                    detail: 'Se importaron las actividades correctamente',
+                    severity: "success"
+                });
             },
             onError: (res) => {
                 console.log('Hubo un error:', res);
