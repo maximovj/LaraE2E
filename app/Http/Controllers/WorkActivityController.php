@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\WorkActivityStatus;
+use App\Imports\WorkActivityImport;
 use App\Models\WorkActivity;
 use App\Models\WorkDay;
 use App\Models\WorkEvent;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class WorkActivityController extends Controller
 {
@@ -287,6 +289,10 @@ class WorkActivityController extends Controller
         try {
             $file = $request->file('excelFile');
             $path = $file->store('uploads/excel');
+
+            $import_activities = new WorkActivityImport();
+            Excel::import($import_activities, $path);
+
             return back()->with('inertia_session', [
                 'ctx_title' => 'Actividad de trabajo',
                 'ctx_message' => 'Empleado modificado correctamente',
@@ -295,7 +301,17 @@ class WorkActivityController extends Controller
                     'path' => $path,
                 ]
             ]);
-        } catch (\Exception $e) {
+        }  catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+
+            $failures = $e->failures();
+
+            foreach ($failures as $failure) {
+                $failure->row(); // row that went wrong
+                $failure->attribute(); // either heading key (if using heading row concern) or column index
+                $failure->errors(); // Actual error messages from Laravel validator
+                $failure->values(); // The values of the row that has failed.
+            }
+
             return back()->with('inertia_session', [
                 'ctx_title' => 'Actividad de trabajo',
                 'ctx_message' => 'Error al subir el archivo',
