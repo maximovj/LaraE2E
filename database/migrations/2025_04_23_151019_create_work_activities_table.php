@@ -33,7 +33,7 @@ return new class extends Migration
             $table->time('end_time')->nullable(); // Hora de fin
             $table->integer('duration_hours')->default(0); // Duración (puede calcularse automáticamente)
             $table->text('notes')->nullable(); // Notas adicionales
-            $table->string('tags')->nullable(); // Etiquetas
+            $table->json('tags')->nullable(); // Etiquetas
             $table->enum('status', WorkActivityStatus::values())->default(WorkActivityStatus::PENDING->value);
 
             // Crear indices

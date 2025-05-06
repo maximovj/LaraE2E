@@ -36,7 +36,7 @@ return new class extends Migration
             ])->default('pending'); // estado
             $table->text('details')->nullable(); // detalles
             $table->text('note')->nullable(); // notas
-            $table->string('tags')->nullable();
+            $table->json('tags')->nullable();
 
             // Índice único compuesto (combinación única de ambos campos)
             $table->unique(['employee_id', 'date']);
