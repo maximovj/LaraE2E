@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -38,9 +39,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 });
 */
 
+/*
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+*/
+
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::post('/upload', [WorkActivityController::class, 'import'])
     ->middleware(['auth', 'verified', 'role:regular-user'])->name('work-activities.import');
